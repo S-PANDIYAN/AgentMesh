@@ -1,0 +1,25 @@
+# AgentMesh Requirements
+# Minimal dependencies for multi-agent code review system
+
+# Core dependencies - None required!
+# This MVP uses only Python standard library for pattern matching
+
+# Optional: If you want to add real LLM integration later
+# openai>=1.0.0
+# anthropic>=0.7.0
+
+# Optional: For enhanced testing
+# pytest>=7.4.0
+# pytest-cov>=4.1.0
+
+# Optional: For code analysis enhancements  
+# pylint>=3.0.0
+# bandit>=1.7.5
+
+# Optional: For web interface (future enhancement)
+# flask>=3.0.0
+# fastapi>=0.104.0
+
+# Note: This project is designed to work with ZERO external dependencies
+# All functionality is built using Python standard library only
+# This makes it perfect for final year projects and demonstrations
