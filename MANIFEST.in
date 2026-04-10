@@ -1,0 +1,10 @@
+include README.md
+include LICENSE
+include AgentMesh/INSTALLATION_GUIDE.md
+include AgentMesh/QUICKSTART.md
+include AgentMesh/USER_GUIDE.md
+include AgentMesh/.env.example
+include AgentMesh/requirements.txt
+recursive-include AgentMesh/docs *.md
+recursive-include AgentMesh/examples *.py
+recursive-include AgentMesh/plugins *.py
