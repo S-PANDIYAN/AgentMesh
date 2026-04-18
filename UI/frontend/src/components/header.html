@@ -1,0 +1,36 @@
+<!-- Header Component -->
+<header id="header" class="fixed top-0 w-full z-50 bg-[#fff8f3]/80 dark:bg-black/80 backdrop-blur-2xl shadow-[0_20px_40px_rgba(32,27,20,0.06)] flex justify-between items-center px-8 h-16 border-b border-outline-variant/10">
+  <div class="flex items-center gap-6">
+    <a href="../../public/index.html" class="text-2xl font-black text-[#231b00] dark:text-[#FACC15] italic font-headline hover:opacity-80 transition-opacity">
+      AgentMesh Intelligence Hub
+    </a>
+    <nav class="hidden md:flex items-center space-x-8">
+      <a class="text-gray-500 hover:text-[#735c00] font-headline uppercase tracking-tight font-bold text-sm transition-colors" href="#">Cluster Status</a>
+      <a class="text-[#735c00] dark:text-[#FACC15] border-b-2 border-[#FACC15] font-headline uppercase tracking-tight font-bold text-sm" href="#">Models</a>
+      <a class="text-gray-500 hover:text-[#735c00] font-headline uppercase tracking-tight font-bold text-sm transition-colors" href="#">Audit Log</a>
+    </nav>
+  </div>
+  <div class="flex items-center gap-4">
+    <button id="notifications-btn" class="material-symbols-outlined text-on-surface-variant hover:translate-x-1 transition-transform duration-200 cursor-pointer" aria-label="Notifications">notifications</button>
+    <button id="settings-btn" class="material-symbols-outlined text-on-surface-variant hover:translate-x-1 transition-transform duration-200 cursor-pointer" aria-label="Settings">settings</button>
+    <button id="terminal-btn" class="material-symbols-outlined text-on-surface-variant hover:translate-x-1 transition-transform duration-200 cursor-pointer" aria-label="Terminal">terminal</button>
+    <div class="w-8 h-8 bg-surface-container-highest border border-outline-variant">
+      <img alt="Administrator Avatar" class="w-full h-full object-cover" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBa0nNyGgdpRqbH2vh7qAdUbE18WGixlf8oquL_tHTuqFlBykNdPPdC6Dr78OKducTuzJ9dPdJEzMRPXpxFPptt7V44PU0xlBPpUx7yGDTCWT3ri7P7OLaoLnG1u4zaCElL7NwTQ2gyNVQZYYvemVhqATvF00Dvri-6ZVecvbv_X9o8bvtUjORsl0enAcSc8hdSZgdJx2VGH112R4lp8HzhxEgFDFOKLDARdb5Ya5kL4Q_u1W5_Zh-fgNPU63-3vDsrVSEvU38tuvlG"/>
+    </div>
+  </div>
+</header>
+
+<script>
+// Header event listeners
+document.getElementById('notifications-btn')?.addEventListener('click', () => {
+  Utils?.showNotification('No new notifications', 'info');
+});
+
+document.getElementById('settings-btn')?.addEventListener('click', () => {
+  Utils?.showNotification('Settings opened', 'info');
+});
+
+document.getElementById('terminal-btn')?.addEventListener('click', () => {
+  Utils?.showNotification('Terminal opened', 'info');
+});
+</script>

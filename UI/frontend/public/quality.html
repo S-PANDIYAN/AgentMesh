@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Code Quality Report - AgentMesh</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#eab308",
+                        "primary-container": "#facc15",
+                        "on-primary-fixed": "#231b00",
+                        "surface": "#ffffff",
+                        "surface-container": "#fafaf9",
+                        "on-surface": "#1a1a1a",
+                        "on-surface-variant": "#4d4632"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .dot-matrix {
+            background-image: radial-gradient(circle, #e5e5e5 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .code-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.05);
+        }
+        .metric-card {
+            background: #fafaf9;
+            border: 1px solid #e7e5e4;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #eab308;
+            margin-bottom: 4px;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: #78716c;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .score-ring {
+            width: 100%;
+            height: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 12px;
+        }
+        .ring-center {
+            text-align: center;
+            z-index: 2;
+        }
+        .ring-score {
+            font-size: 48px;
+            font-weight: 700;
+            color: #eab308;
+        }
+        .ring-label {
+            font-size: 12px;
+            color: #78716c;
+            text-transform: uppercase;
+        }
+        .quality-item {
+            border: 1px solid #e7e5e4;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        .quality-item:hover {
+            border-color: #eab308;
+            background: #fafaf9;
+        }
+        .quality-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .quality-title {
+            font-bold text-base;
+        }
+        .quality-count {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .quality-count.critical {
+            background: #fecaca;
+            color: #991b1b;
+        }
+        .quality-count.low {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .file-list {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e7e5e4;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 12px;
+        }
+        .file-name {
+            color: #1a1a1a;
+            font-family: 'JetBrains Mono';
+        }
+        .file-location {
+            color: #78716c;
+            font-size: 11px;
+        }
+        .complexity-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+        }
+        .complexity-label {
+            width: 140px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .complexity-meter {
+            flex: 1;
+            height: 20px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            position: relative;
+        }
+        .complexity-fill-low {
+            background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+            height: 100%;
+            border-radius: 4px;
+        }
+        .complexity-fill-medium {
+            background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%);
+            height: 100%;
+            border-radius: 4px;
+        }
+        .complexity-fill-high {
+            background: linear-gradient(90deg, #ef4444 0%, #f87171 100%);
+            height: 100%;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-white font-body text-on-surface overflow-hidden h-screen flex flex-col">
+
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white border-b border-stone-200 flex justify-between items-center px-6 h-14">
+    <div class="flex items-center gap-10">
+        <div class="flex items-center gap-2">
+            <div class="w-6 h-6 bg-primary-container flex items-center justify-center font-bold text-[10px] text-on-primary-fixed">AM</div>
+            <span class="text-lg font-bold tracking-tight text-on-surface uppercase font-headline">AgentMesh</span>
+        </div>
+        <div class="hidden md:flex items-center gap-6">
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('dashboard.html')">Dashboard</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('results.html')">Results</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-primary transition-colors cursor-pointer">Quality</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('agents.html')">Agents</a>
+        </div>
+    </div>
+    <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 px-3 py-1 bg-yellow-100 border border-yellow-300">
+            <span class="material-symbols-outlined text-sm text-yellow-600">info</span>
+            <span class="font-mono text-[10px] text-yellow-700 font-medium">12 ISSUES</span>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<aside class="h-screen w-64 fixed left-0 top-14 bg-stone-50 border-r border-stone-200 flex flex-col py-6 gap-2 z-40">
+    <div class="px-6 mb-8">
+        <h3 class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">Navigation</h3>
+    </div>
+    <div class="flex flex-col">
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 transition-all cursor-pointer" onclick="goToPage('results.html')">
+            <span class="material-symbols-outlined text-lg">list_alt</span> Back to Results
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 transition-all cursor-pointer" onclick="goToPage('performance.html')">
+            <span class="material-symbols-outlined text-lg">speed</span> Performance
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest bg-primary-container text-on-primary-fixed transition-all">
+            <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">code</span> Quality
+        </a>
+    </div>
+</aside>
+
+<!-- Main Content -->
+<main class="ml-64 mt-14 p-8 flex-1 dot-matrix relative h-[calc(100vh-3.5rem)] overflow-auto">
+    <div class="max-w-5xl">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold font-headline mb-2 uppercase">Code Quality Report</h1>
+            <p class="text-stone-500 text-sm">Maintainability, style violations, and complexity analysis</p>
+        </div>
+
+        <!-- Main Metrics -->
+        <div class="grid grid-cols-4 gap-4 mb-8">
+            <div class="metric-card code-shadow">
+                <div class="metric-value">6.8</div>
+                <div class="metric-label">Quality Score</div>
+            </div>
+            <div class="metric-card code-shadow">
+                <div class="metric-value">8.3</div>
+                <div class="metric-label">Maintainability</div>
+            </div>
+            <div class="metric-card code-shadow">
+                <div class="metric-value">34</div>
+                <div class="metric-label">Avg Complexity</div>
+            </div>
+            <div class="metric-card code-shadow">
+                <div class="metric-value">2.1</div>
+                <div class="metric-label">Duplication %</div>
+            </div>
+        </div>
+
+        <!-- Issue Categories -->
+        <h2 class="font-headline font-bold text-lg mb-4">Code Quality Issues</h2>
+
+        <!-- Style Issues -->
+        <div class="quality-item">
+            <div class="quality-header">
+                <div>
+                    <div class="quality-title">Missing Type Annotations</div>
+                    <p class="text-sm text-stone-600 mt-1">Variables lacking TypeScript type hints reduce IDE support and type safety</p>
+                </div>
+                <span class="quality-count">8</span>
+            </div>
+            <div class="file-list">
+                <div class="file-item" style="border-bottom: 1px solid #e7e5e4; padding-bottom: 8px;">
+                    <span class="file-name">validator.ts</span>
+                    <span class="file-location">Lines: 45, 67, 89, 123, 156, 178, 201, 234</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unused Variables -->
+        <div class="quality-item">
+            <div class="quality-header">
+                <div>
+                    <div class="quality-title">Unused Variables & Imports</div>
+                    <p class="text-sm text-stone-600 mt-1">Code contains unused declarations that should be removed</p>
+                </div>
+                <span class="quality-count">4</span>
+            </div>
+            <div class="file-list">
+                <div class="file-item">
+                    <span class="file-name">-</span>
+                    <span class="file-location">Line 156: variable 'tempData' never used</span>
+                </div>
+                <div class="file-item">
+                    <span class="file-name">-</span>
+                    <span class="file-location">Line 234: import 'unused-library' never used</span>
+                </div>
+                <div class="file-item">
+                    <span class="file-name">-</span>
+                    <span class="file-location">Line 312: function 'oldHelper()' unreachable</span>
+                </div>
+                <div class="file-item">
+                    <span class="file-name">-</span>
+                    <span class="file-location">Line 456: variable 'legacyConfig' no longer referenced</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Complexity Analysis -->
+        <h2 class="font-headline font-bold text-lg mb-4">Function Complexity</h2>
+        <div class="bg-white border border-stone-200 p-6 code-shadow mb-8">
+            <div class="complexity-bar">
+                <div class="complexity-label">validateUser()</div>
+                <div class="complexity-meter">
+                    <div class="complexity-fill-high" style="width: 80%;"></div>
+                </div>
+                <div style="width: 60px; text-align: right; font-weight: 600;">12</div>
+            </div>
+            <div class="complexity-bar">
+                <div class="complexity-label">processData()</div>
+                <div class="complexity-meter">
+                    <div class="complexity-fill-medium" style="width: 50%;"></div>
+                </div>
+                <div style="width: 60px; text-align: right; font-weight: 600;">7</div>
+            </div>
+            <div class="complexity-bar">
+                <div class="complexity-label">formatResponse()</div>
+                <div class="complexity-meter">
+                    <div class="complexity-fill-low" style="width: 30%;"></div>
+                </div>
+                <div style="width: 60px; text-align: right; font-weight: 600;">3</div>
+            </div>
+        </div>
+
+        <!-- Maintainability Issues -->
+        <div class="quality-item">
+            <div class="quality-header">
+                <div>
+                    <div class="quality-title">Functions Too Complex (Cyclomatic Complexity > 10)</div>
+                    <p class="text-sm text-stone-600 mt-1">These functions should be broken down into smaller, more testable units</p>
+                </div>
+                <span class="quality-count critical">2</span>
+            </div>
+            <div class="file-list">
+                <div class="file-item">
+                    <div>
+                        <div class="file-name">validateUser() - Complexity: 12</div>
+                        <div class="file-location">validator.ts:45 • Too many conditional branches</div>
+                    </div>
+                </div>
+                <div class="file-item">
+                    <div>
+                        <div class="file-name">checkPermissions() - Complexity: 11</div>
+                        <div class="file-location">validator.ts:234 • Multiple nested conditions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comments & Documentation -->
+        <div class="quality-item">
+            <div class="quality-header">
+                <div>
+                    <div class="quality-title">Missing/Outdated Documentation</div>
+                    <p class="text-sm text-stone-600 mt-1">Functions lacking JSDoc comments or outdated documentation</p>
+                </div>
+                <span class="quality-count">6</span>
+            </div>
+            <div class="file-list">
+                <div class="file-item">
+                    <div>
+                        <div class="file-name">processRequest() - No JSDoc</div>
+                        <div class="file-location">validator.ts:89 • Critical function needs documentation</div>
+                    </div>
+                </div>
+                <div class="file-item">
+                    <div>
+                        <div class="file-name">formatData() - Outdated JSDoc</div>
+                        <div class="file-location">validator.ts:156 • Parameters changed but JSDoc not updated</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Duplication -->
+        <div class="quality-item">
+            <div class="quality-header">
+                <div>
+                    <div class="quality-title">Code Duplication</div>
+                    <p class="text-sm text-stone-600 mt-1">Similar code blocks found in multiple locations</p>
+                </div>
+                <span class="quality-count low">2.1%</span>
+            </div>
+            <div class="file-list">
+                <div class="file-item">
+                    <span class="file-name">Duplicate block 1</span>
+                    <span class="file-location">Lines 67-78 and 234-245 (validation logic)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="mt-8 p-6 bg-emerald-50 border border-emerald-200 rounded-lg">
+            <h3 class="font-bold text-emerald-900 mb-2">Quality Improvement Potential</h3>
+            <p class="text-sm text-emerald-700">Focus on reducing function complexity and adding type annotations. With these improvements, maintainability score could reach 9.2+.</p>
+        </div>
+
+        <!-- Export -->
+        <div class="mt-8 pb-4 text-center">
+            <button class="px-6 py-3 bg-primary-container text-on-primary-fixed font-headline font-bold uppercase hover:bg-primary transition-colors">
+                Export Quality Report
+            </button>
+        </div>
+    </div>
+</main>
+
+<script>
+function goToPage(page) {
+    window.location.href = page;
+}
+</script>
+
+</body>
+</html>

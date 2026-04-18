@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AgentMesh | Multi-Agent Analysis System</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/pages.css">
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#eab308",
+                        "primary-container": "#facc15",
+                        "on-primary-fixed": "#231b00",
+                        "surface": "#ffffff",
+                        "surface-container": "#fafaf9",
+                        "on-surface": "#1a1a1a",
+                        "on-surface-variant": "#4d4632"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white font-body text-on-surface">
+
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white border-b border-stone-200 flex justify-between items-center px-8 h-14">
+    <div class="flex items-center gap-12">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-primary-container flex items-center justify-center font-bold text-xs text-on-primary-fixed font-headline">AM</div>
+            <span class="text-xl font-bold tracking-tight text-on-surface uppercase font-headline">AgentMesh</span>
+        </div>
+        <div class="flex items-center gap-8">
+            <span class="text-xs font-bold uppercase tracking-widest text-stone-400">v4.8.2</span>
+            <div class="h-6 border-l border-stone-200"></div>
+            <span class="text-xs font-bold uppercase tracking-widest text-stone-400">SPA Framework</span>
+        </div>
+    </div>
+    <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 px-4 py-1.5 bg-emerald-50 border border-emerald-200">
+            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="font-mono text-xs text-emerald-700 font-semibold">SYSTEM OPERATIONAL</span>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<aside id="sidebar" class="h-screen w-72 fixed left-0 top-14 bg-stone-50 border-r border-stone-200 flex flex-col py-8 gap-2 z-40 overflow-y-auto">
+    <div class="px-8 mb-10">
+        <h3 class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-stone-500 mb-4">Navigation Hub</h3>
+        <p class="font-mono text-[11px] text-stone-600">All five autonomous agents in coordination</p>
+    </div>
+    
+    <div id="nav-links" class="flex flex-col px-4 gap-1">
+        <!-- Nav links will be injected here by app.js -->
+    </div>
+
+    <div class="mt-auto px-8 mb-8">
+        <div class="bg-stone-900 text-primary-container p-4 border border-stone-800">
+            <div class="font-mono text-[10px] font-bold uppercase tracking-widest mb-2">System Status</div>
+            <div class="text-2xl font-black mb-1">5/5</div>
+            <div class="text-stone-400 text-xs mb-3">Agents Active</div>
+            <div class="w-full bg-stone-800 h-1 mb-2">
+                <div class="bg-primary-container h-full" style="width: 100%"></div>
+            </div>
+            <div class="text-[10px] text-stone-400">ALL SYSTEMS NOMINAL</div>
+        </div>
+    </div>
+</aside>
+
+<!-- Main App Container -->
+<main id="app" class="ml-72 mt-14 p-12 dot-matrix min-h-[calc(100vh-3.5rem)]">
+    <!-- Pages will be rendered here -->
+</main>
+
+<!-- Page Templates (Hidden) -->
+<div id="templates" class="hidden">
+    <div id="template-dashboard"></div>
+    <div id="template-agents"></div>
+    <div id="template-results"></div>
+    <div id="template-tasks"></div>
+    <div id="template-security"></div>
+    <div id="template-performance"></div>
+    <div id="template-quality"></div>
+    <div id="template-settings"></div>
+</div>
+
+<!-- Scripts -->
+<script src="js/app.js"></script>
+<script src="js/router.js"></script>
+<script src="js/pages/dashboard.js"></script>
+<script src="js/pages/agents.js"></script>
+<script src="js/pages/results.js"></script>
+<script src="js/pages/tasks.js"></script>
+<script src="js/pages/security.js"></script>
+<script src="js/pages/performance.js"></script>
+<script src="js/pages/quality.js"></script>
+<script src="js/pages/settings.js"></script>
+<script src="js/pages/diff-viewer.js"></script>
+<script src="js/pages/issue-details.js"></script>
+<script src="js/pages/file-browser.js"></script>
+<script src="js/pages/analysis-history.js"></script>
+
+</body>
+</html>

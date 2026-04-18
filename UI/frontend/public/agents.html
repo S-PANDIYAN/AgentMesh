@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Agent Control Panel - AgentMesh</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#eab308",
+                        "primary-container": "#facc15",
+                        "on-primary-fixed": "#231b00",
+                        "surface": "#ffffff",
+                        "surface-container": "#fafaf9",
+                        "on-surface": "#1a1a1a",
+                        "on-surface-variant": "#4d4632"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .dot-matrix {
+            background-image: radial-gradient(circle, #e5e5e5 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .code-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.05);
+        }
+        .agent-card {
+            border: 1px solid #e7e5e4;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .agent-card:hover {
+            border-color: #eab308;
+            box-shadow: 0 4px 12px rgba(234, 179, 8, 0.15);
+            transform: translateY(-2px);
+        }
+        .agent-header {
+            background: linear-gradient(135deg, #fafaf9 0%, #f5f5f4 100%);
+            padding: 16px;
+            border-bottom: 1px solid #e7e5e4;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .agent-status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #10b981;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .agent-body {
+            padding: 16px;
+        }
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f5f4;
+            font-size: 13px;
+        }
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+        .metric-label {
+            color: #78716c;
+            font-weight: 500;
+        }
+        .metric-value {
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+        .agent-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f5f5f4;
+        }
+        .btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-primary {
+            background-color: #eab308;
+            color: #1a1a1a;
+        }
+        .btn-primary:hover {
+            background-color: #facc15;
+        }
+        .btn-secondary {
+            background-color: #f5f5f4;
+            color: #1a1a1a;
+            border: 1px solid #e7e5e4;
+        }
+        .btn-secondary:hover {
+            background-color: #fafaf9;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider {
+            background-color: #eab308;
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .stat-box {
+            background-color: #fafaf9;
+            border: 1px solid #e7e5e4;
+            padding: 12px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #eab308;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #78716c;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="bg-white font-body text-on-surface overflow-hidden h-screen flex flex-col">
+
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white border-b border-stone-200 flex justify-between items-center px-6 h-14">
+    <div class="flex items-center gap-10">
+        <div class="flex items-center gap-2">
+            <div class="w-6 h-6 bg-primary-container flex items-center justify-center font-bold text-[10px] text-on-primary-fixed">AM</div>
+            <span class="text-lg font-bold tracking-tight text-on-surface uppercase font-headline">AgentMesh</span>
+        </div>
+        <div class="hidden md:flex items-center gap-6">
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('dashboard.html')">Dashboard</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('index.html')">Orchestrator</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('results.html')">Results</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-primary transition-colors cursor-pointer">Agents</a>
+        </div>
+    </div>
+    <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 px-3 py-1 bg-stone-100 border border-stone-200">
+            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="font-mono text-[10px] text-stone-500 font-medium">5/5 ACTIVE</span>
+        </div>
+        <button class="p-2 text-stone-400 hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-xl">search</span></button>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<aside class="h-screen w-64 fixed left-0 top-14 bg-stone-50 border-r border-stone-200 flex flex-col py-6 gap-2 z-40">
+    <div class="px-6 mb-8">
+        <h3 class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">Navigation</h3>
+    </div>
+    <div class="flex flex-col">
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 transition-all cursor-pointer" onclick="goToPage('dashboard.html')">
+            <span class="material-symbols-outlined text-lg">home</span> Dashboard
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 transition-all cursor-pointer" onclick="goToPage('results.html')">
+            <span class="material-symbols-outlined text-lg">list_alt</span> Results
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 transition-all cursor-pointer" onclick="goToPage('tasks.html')">
+            <span class="material-symbols-outlined text-lg">check_circle</span> Tasks
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest bg-primary-container text-on-primary-fixed transition-all">
+            <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">smart_toy</span> Agents
+        </a>
+    </div>
+</aside>
+
+<!-- Main Content -->
+<main class="ml-64 mt-14 p-8 flex-1 dot-matrix relative h-[calc(100vh-3.5rem)] overflow-auto">
+    <div class="max-w-7xl">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold font-headline mb-2 uppercase">Agent Control Panel</h1>
+            <p class="text-stone-500 text-sm">Manage all 5 autonomous analysis agents and their configurations</p>
+        </div>
+
+        <!-- Overall Stats -->
+        <div class="grid grid-cols-4 gap-4 mb-8">
+            <div class="bg-white border border-stone-200 p-4 code-shadow">
+                <div class="font-mono text-[10px] font-bold text-stone-400 uppercase mb-2">Total Agents</div>
+                <div class="text-3xl font-black text-on-surface">5</div>
+            </div>
+            <div class="bg-white border border-stone-200 p-4 code-shadow">
+                <div class="font-mono text-[10px] font-bold text-stone-400 uppercase mb-2">Active</div>
+                <div class="text-3xl font-black text-green-600">5</div>
+            </div>
+            <div class="bg-white border border-stone-200 p-4 code-shadow">
+                <div class="font-mono text-[10px] font-bold text-stone-400 uppercase mb-2">Avg Accuracy</div>
+                <div class="text-3xl font-black text-primary">92.3%</div>
+            </div>
+            <div class="bg-white border border-stone-200 p-4 code-shadow">
+                <div class="font-mono text-[10px] font-bold text-stone-400 uppercase mb-2">Tasks Processed</div>
+                <div class="text-3xl font-black text-on-surface">847</div>
+            </div>
+        </div>
+
+        <!-- Agent Grid -->
+        <div class="grid grid-cols-2 gap-8">
+            <!-- Agent 1: Security Analyzer -->
+            <div class="agent-card code-shadow">
+                <div class="agent-header">
+                    <div class="agent-status-dot"></div>
+                    <div class="flex-1">
+                        <h3 class="font-headline font-bold text-sm">Security Analyzer</h3>
+                        <p class="text-[10px] text-stone-500 mt-1">Vulnerability Detection & Risk Assessment</p>
+                    </div>
+                    <span class="material-symbols-outlined text-lg text-red-600">security</span>
+                </div>
+                <div class="agent-body">
+                    <div class="metric-row">
+                        <span class="metric-label">Accuracy Rate</span>
+                        <span class="metric-value">94.5%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Tasks Completed</span>
+                        <span class="metric-value">156</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Avg Response Time</span>
+                        <span class="metric-value">1.2s</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Status</span>
+                        <span class="metric-value" style="color: #10b981;">Operational</span>
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat-box">
+                            <div class="stat-number">23</div>
+                            <div class="stat-label">Issues Found</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">8</div>
+                            <div class="stat-label">Critical</div>
+                        </div>
+                    </div>
+                    <div class="agent-actions">
+                        <button class="btn btn-primary">Configure</button>
+                        <button class="btn btn-secondary">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agent 2: Performance Agent -->
+            <div class="agent-card code-shadow">
+                <div class="agent-header">
+                    <div class="agent-status-dot"></div>
+                    <div class="flex-1">
+                        <h3 class="font-headline font-bold text-sm">Performance Agent</h3>
+                        <p class="text-[10px] text-stone-500 mt-1">Bottleneck Detection & Optimization</p>
+                    </div>
+                    <span class="material-symbols-outlined text-lg" style="color: #3b82f6;">speed</span>
+                </div>
+                <div class="agent-body">
+                    <div class="metric-row">
+                        <span class="metric-label">Accuracy Rate</span>
+                        <span class="metric-value">91.2%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Tasks Completed</span>
+                        <span class="metric-value">142</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Avg Response Time</span>
+                        <span class="metric-value">1.8s</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Status</span>
+                        <span class="metric-value" style="color: #10b981;">Operational</span>
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat-box">
+                            <div class="stat-number">17</div>
+                            <div class="stat-label">Bottlenecks</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">4</div>
+                            <div class="stat-label">Critical</div>
+                        </div>
+                    </div>
+                    <div class="agent-actions">
+                        <button class="btn btn-primary">Configure</button>
+                        <button class="btn btn-secondary">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agent 3: Code Quality -->
+            <div class="agent-card code-shadow">
+                <div class="agent-header">
+                    <div class="agent-status-dot"></div>
+                    <div class="flex-1">
+                        <h3 class="font-headline font-bold text-sm">Code Quality Agent</h3>
+                        <p class="text-[10px] text-stone-500 mt-1">Style, Complexity & Maintainability Analysis</p>
+                    </div>
+                    <span class="material-symbols-outlined text-lg" style="color: #8b5cf6;">code</span>
+                </div>
+                <div class="agent-body">
+                    <div class="metric-row">
+                        <span class="metric-label">Accuracy Rate</span>
+                        <span class="metric-value">88.7%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Tasks Completed</span>
+                        <span class="metric-value">198</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Avg Response Time</span>
+                        <span class="metric-value">0.9s</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Status</span>
+                        <span class="metric-value" style="color: #10b981;">Operational</span>
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat-box">
+                            <div class="stat-number">34</div>
+                            <div class="stat-label">Issues Found</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">12</div>
+                            <div class="stat-label">High</div>
+                        </div>
+                    </div>
+                    <div class="agent-actions">
+                        <button class="btn btn-primary">Configure</button>
+                        <button class="btn btn-secondary">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agent 4: Documentation Agent -->
+            <div class="agent-card code-shadow">
+                <div class="agent-header">
+                    <div class="agent-status-dot"></div>
+                    <div class="flex-1">
+                        <h3 class="font-headline font-bold text-sm">Documentation Agent</h3>
+                        <p class="text-[10px] text-stone-500 mt-1">Code Documentation & Comments Analysis</p>
+                    </div>
+                    <span class="material-symbols-outlined text-lg" style="color: #f59e0b;">description</span>
+                </div>
+                <div class="agent-body">
+                    <div class="metric-row">
+                        <span class="metric-label">Accuracy Rate</span>
+                        <span class="metric-value">92.1%</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Tasks Completed</span>
+                        <span class="metric-value">167</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Avg Response Time</span>
+                        <span class="metric-value">1.4s</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Status</span>
+                        <span class="metric-value" style="color: #10b981;">Operational</span>
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat-box">
+                            <div class="stat-number">28</div>
+                            <div class="stat-label">Issues Found</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">6</div>
+                            <div class="stat-label">Critical</div>
+                        </div>
+                    </div>
+                    <div class="agent-actions">
+                        <button class="btn btn-primary">Configure</button>
+                        <button class="btn btn-secondary">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agent 5: LLM Reasoning -->
+            <div class="agent-card code-shadow" style="grid-column: span 2;">
+                <div class="agent-header">
+                    <div class="agent-status-dot"></div>
+                    <div class="flex-1">
+                        <h3 class="font-headline font-bold text-sm">LLM Reasoning Agent</h3>
+                        <p class="text-[10px] text-stone-500 mt-1">Advanced Analysis & Swarm Consensus</p>
+                    </div>
+                    <span class="material-symbols-outlined text-lg" style="color: #10b981;">auto_awesome</span>
+                </div>
+                <div class="agent-body">
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                        <div>
+                            <div class="metric-row" style="border-bottom: none; padding: 0;">
+                                <span class="metric-label">Accuracy</span>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 700; color: #eab308; margin-top: 4px;">95.8%</div>
+                        </div>
+                        <div>
+                            <div class="metric-row" style="border-bottom: none; padding: 0;">
+                                <span class="metric-label">Tasks Completed</span>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 700; color: #10b981; margin-top: 4px;">184</div>
+                        </div>
+                        <div>
+                            <div class="metric-row" style="border-bottom: none; padding: 0;">
+                                <span class="metric-label">Avg Response</span>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 700; color: #1a1a1a; margin-top: 4px;">2.3s</div>
+                        </div>
+                        <div>
+                            <div class="metric-row" style="border-bottom: none; padding: 0;">
+                                <span class="metric-label">Status</span>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 700; color: #10b981; margin-top: 4px;">Active</div>
+                        </div>
+                    </div>
+                    <div class="agent-actions">
+                        <button class="btn btn-primary">Configure</button>
+                        <button class="btn btn-secondary">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+function goToPage(page) {
+    window.location.href = page;
+}
+</script>
+
+</body>
+</html>

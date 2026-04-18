@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Settings - AgentMesh</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#eab308",
+                        "primary-container": "#facc15",
+                        "on-primary-fixed": "#231b00",
+                        "surface": "#ffffff",
+                        "surface-container": "#fafaf9",
+                        "on-surface": "#1a1a1a",
+                        "on-surface-variant": "#4d4632"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .dot-matrix {
+            background-image: radial-gradient(circle, #e5e5e5 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .code-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.05);
+        }
+        .settings-section {
+            background: #ffffff;
+            border: 1px solid #e7e5e4;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+        .section-header {
+            background: linear-gradient(135deg, #fafaf9 0%, #f5f5f4 100%);
+            padding: 16px;
+            border-bottom: 1px solid #e7e5e4;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section-header h2 {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .section-header span {
+            color: #eab308;
+        }
+        .section-content {
+            padding: 20px;
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #e7e5e4;
+        }
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        .setting-label {
+            flex: 1;
+        }
+        .setting-title {
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        .setting-description {
+            font-size: 12px;
+            color: #78716c;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider {
+            background-color: #eab308;
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        .input-field {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e7e5e4;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: 'JetBrains Mono';
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #eab308;
+            box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.1);
+        }
+        .select-field {
+            padding: 8px 12px;
+            border: 1px solid #e7e5e4;
+            border-radius: 4px;
+            font-size: 13px;
+            background: white;
+            cursor: pointer;
+        }
+        .select-field:focus {
+            outline: none;
+            border-color: #eab308;
+        }
+        .button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+        }
+        .button-primary {
+            background: #eab308;
+            color: #1a1a1a;
+        }
+        .button-primary:hover {
+            background: #facc15;
+        }
+        .button-secondary {
+            background: #f5f5f4;
+            color: #1a1a1a;
+            border: 1px solid #e7e5e4;
+        }
+        .button-secondary:hover {
+            background: #fafaf9;
+        }
+        .button-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .button-danger:hover {
+            background: #fecaca;
+        }
+        .info-box {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+        .info-text {
+            font-size: 12px;
+            color: #1e40af;
+        }
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid #e7e5e4;
+            margin-bottom: 24px;
+        }
+        .tab {
+            padding: 12px 24px;
+            border: none;
+            background: none;
+            font-weight: 600;
+            cursor: pointer;
+            color: #78716c;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+        .tab.active {
+            color: #eab308;
+            border-bottom-color: #eab308;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-white font-body text-on-surface overflow-hidden h-screen flex flex-col">
+
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white border-b border-stone-200 flex justify-between items-center px-6 h-14">
+    <div class="flex items-center gap-10">
+        <div class="flex items-center gap-2">
+            <div class="w-6 h-6 bg-primary-container flex items-center justify-center font-bold text-[10px] text-on-primary-fixed">AM</div>
+            <span class="text-lg font-bold tracking-tight text-on-surface uppercase font-headline">AgentMesh</span>
+        </div>
+        <div class="hidden md:flex items-center gap-6">
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('dashboard.html')">Dashboard</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-primary transition-colors cursor-pointer">Settings</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('agents.html')">Agents</a>
+        </div>
+    </div>
+    <div class="flex items-center gap-4">
+        <button class="p-2 text-stone-400 hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-xl">search</span></button>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<aside class="h-screen w-64 fixed left-0 top-14 bg-stone-50 border-r border-stone-200 flex flex-col py-6 gap-2 z-40">
+    <div class="px-6 mb-8">
+        <h3 class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">Configuration</h3>
+    </div>
+    <div class="flex flex-col">
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 transition-all cursor-pointer" onclick="goToPage('dashboard.html')">
+            <span class="material-symbols-outlined text-lg">home</span> Dashboard
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest bg-primary-container text-on-primary-fixed transition-all">
+            <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">settings</span> Settings
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 transition-all cursor-pointer" onclick="goToPage('agents.html')">
+            <span class="material-symbols-outlined text-lg">smart_toy</span> Agents
+        </a>
+    </div>
+</aside>
+
+<!-- Main Content -->
+<main class="ml-64 mt-14 p-8 flex-1 dot-matrix relative h-[calc(100vh-3.5rem)] overflow-auto">
+    <div class="max-w-5xl">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold font-headline mb-2 uppercase">Settings & Configuration</h1>
+            <p class="text-stone-500 text-sm">Manage AgentMesh preferences, integrations, and system behavior</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('general')">General</button>
+            <button class="tab" onclick="switchTab('api')">API Configuration</button>
+            <button class="tab" onclick="switchTab('integrations')">Integrations</button>
+            <button class="tab" onclick="switchTab('advanced')">Advanced</button>
+        </div>
+
+        <!-- General Settings Tab -->
+        <div id="general" class="tab-content active">
+            <!-- Display Settings -->
+            <div class="settings-section code-shadow">
+                <div class="section-header">
+                    <span class="material-symbols-outlined">palette</span>
+                    <h2>Display Settings</h2>
+                </div>
+                <div class="section-content">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Dark Mode</div>
+                            <div class="setting-description">Enable dark theme for reduced eye strain</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Compact Layout</div>
+                            <div class="setting-description">Use condensed spacing for more information density</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Language</div>
+                            <div class="setting-description">Choose your preferred interface language</div>
+                        </div>
+                        <select class="select-field">
+                            <option>English</option>
+                            <option>Spanish</option>
+                            <option>French</option>
+                            <option>German</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="settings-section code-shadow">
+                <div class="section-header">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <h2>Notifications</h2>
+                </div>
+                <div class="section-content">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Email Notifications</div>
+                            <div class="setting-description">Receive analysis completion alerts via email</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Critical Issues Only</div>
+                            <div class="setting-description">Only notify for critical vulnerabilities</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Notification Email</div>
+                            <div class="setting-description">Where to send alerts</div>
+                        </div>
+                        <input type="email" class="input-field" value="user@example.com">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Configuration Tab -->
+        <div id="api" class="tab-content">
+            <div class="info-box">
+                <div class="info-text">⚠️ Store API keys securely. Never share or commit them to version control.</div>
+            </div>
+
+            <!-- API Keys -->
+            <div class="settings-section code-shadow">
+                <div class="section-header">
+                    <span class="material-symbols-outlined">vpn_key</span>
+                    <h2>API Keys</h2>
+                </div>
+                <div class="section-content">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Groq API Key</div>
+                            <div class="setting-description">LLM reasoning engine authentication</div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="password" class="input-field" value="gsk_••••••••••••••••••••" style="width: 250px;">
+                            <button class="button button-secondary">Reveal</button>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">GitHub Token</div>
+                            <div class="setting-description">GitHub integration for PR analysis</div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="password" class="input-field" value="ghp_••••••••••••••••••••" style="width: 250px;">
+                            <button class="button button-secondary">Regenerate</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rate Limiting -->
+            <div class="settings-section code-shadow">
+                <div class="section-header">
+                    <span class="material-symbols-outlined">speed</span>
+                    <h2>Rate Limiting</h2>
+                </div>
+                <div class="section-content">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Max Concurrent Analyses</div>
+                            <div class="setting-description">Maximum parallel analysis tasks</div>
+                        </div>
+                        <select class="select-field" style="width: 100px;">
+                            <option>1</option>
+                            <option>3</option>
+                            <option selected>5</option>
+                            <option>10</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Request Timeout (seconds)</div>
+                            <div class="setting-description">Maximum time per analysis request</div>
+                        </div>
+                        <input type="number" class="input-field" value="30" style="width: 100px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integrations Tab -->
+        <div id="integrations" class="tab-content">
+            <!-- GitHub Integration -->
+            <div class="settings-section code-shadow">
+                <div class="section-header">
+                    <span class="material-symbols-outlined">integration_instructions</span>
+                    <h2>GitHub Integration</h2>
+                </div>
+                <div class="section-content">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">GitHub Webhook Status</div>
+                            <div class="setting-description">Automatic PR analysis on new pull requests</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Auto-Comment on PRs</div>
+                            <div class="setting-description">Post analysis results as GitHub comments</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Webhook URL</div>
+                            <div class="setting-description">GitHub sends events to this endpoint</div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" class="input-field" value="https://api.agentmesh.io/webhooks/github" readonly>
+                            <button class="button button-secondary">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slack Integration -->
+            <div class="settings-section code-shadow">
+                <div class="section-header">
+                    <span class="material-symbols-outlined">chat</span>
+                    <h2>Slack Integration</h2>
+                </div>
+                <div class="section-content">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Slack Notifications</div>
+                            <div class="setting-description">Send critical findings to Slack</div>
+                        </div>
+                        <button class="button button-primary">Connect Slack</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Settings Tab -->
+        <div id="advanced" class="tab-content">
+            <!-- Performance Tuning -->
+            <div class="settings-section code-shadow">
+                <div class="section-header">
+                    <span class="material-symbols-outlined">psychology</span>
+                    <h2>Agent Configuration</h2>
+                </div>
+                <div class="section-content">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Enable All Agents</div>
+                            <div class="setting-description">Use all 5 agents for analysis (slower but more thorough)</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">LLM Reasoning Agent</div>
+                            <div class="setting-description">Advanced analysis using large language models</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Confidence Threshold (%)</div>
+                            <div class="setting-description">Minimum confidence required to report findings</div>
+                        </div>
+                        <input type="number" class="input-field" value="75" min="0" max="100" style="width: 100px;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Management -->
+            <div class="settings-section code-shadow">
+                <div class="section-header">
+                    <span class="material-symbols-outlined">storage</span>
+                    <h2>Data Management</h2>
+                </div>
+                <div class="section-content">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Auto-Delete Old Results</div>
+                            <div class="setting-description">Automatically remove analysis results older than</div>
+                        </div>
+                        <select class="select-field" style="width: 150px;">
+                            <option>Never</option>
+                            <option>30 days</option>
+                            <option selected>90 days</option>
+                            <option>1 year</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Storage Used</div>
+                            <div class="setting-description">Current analysis history size</div>
+                        </div>
+                        <button class="button button-danger">Clear Cache</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Settings -->
+            <div class="settings-section code-shadow">
+                <div class="section-header">
+                    <span class="material-symbols-outlined">download</span>
+                    <h2>Export Options</h2>
+                </div>
+                <div class="section-content">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Default Export Format</div>
+                            <div class="setting-description">Format for generated reports</div>
+                        </div>
+                        <select class="select-field" style="width: 150px;">
+                            <option>HTML</option>
+                            <option selected>PDF</option>
+                            <option>JSON</option>
+                            <option>CSV</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Auto-Export Results</div>
+                            <div class="setting-description">Automatically save results after each analysis</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Settings Button -->
+        <div class="mt-8 flex gap-4 pb-4">
+            <button class="button button-primary" onclick="saveSettings()">Save Settings</button>
+            <button class="button button-secondary" onclick="resetSettings()">Reset to Defaults</button>
+        </div>
+    </div>
+</main>
+
+<script>
+function switchTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.remove('active');
+    });
+    
+    // Remove active class from all tabs
+    document.querySelectorAll('.tab').forEach(el => {
+        el.classList.remove('active');
+    });
+    
+    // Show selected tab content
+    document.getElementById(tabName).classList.add('active');
+    
+    // Mark clicked tab as active
+    event.target.classList.add('active');
+}
+
+function saveSettings() {
+    alert('✅ Settings saved successfully!');
+}
+
+function resetSettings() {
+    if (confirm('Are you sure you want to reset all settings to defaults?')) {
+        alert('Settings have been reset to defaults.');
+    }
+}
+
+function goToPage(page) {
+    window.location.href = page;
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentMesh Frontend-Backend Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .status-box {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .status-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .status-value {
+            color: #333;
+            margin-left: 10px;
+        }
+
+        .status-value.error {
+            color: #e74c3c;
+        }
+
+        .status-value.success {
+            color: #27ae60;
+        }
+
+        .status-icon {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            grid-column: 1 / 2;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            grid-column: 2 / 3;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #efefef;
+        }
+
+        .btn-logout {
+            background: #e74c3c;
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .btn-logout:hover {
+            background: #c0392b;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab-btn {
+            padding: 10px 15px;
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .info-text {
+            color: #666;
+            font-size: 13px;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .test-result {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #667eea;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 AgentMesh Integration</h1>
+        <p class="subtitle">Frontend-Backend Connection Dashboard</p>
+
+        <div id="statusAlert" class="alert"></div>
+
+        <div class="status-box">
+            <div class="status-item">
+                <span class="status-label">Backend Status:</span>
+                <span class="status-value" id="backendStatus">
+                    <span class="loading"></span> Checking...
+                </span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">API Version:</span>
+                <span class="status-value" id="apiVersion">v2</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Authentication:</span>
+                <span class="status-value" id="authStatus">Not authenticated</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Configuration:</span>
+                <span class="status-value" id="configStatus">
+                    <span id="configUrl"></span>
+                </span>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="login">Login</button>
+            <button class="tab-btn" data-tab="register">Register</button>
+            <button class="tab-btn" data-tab="test">Test API</button>
+            <button class="tab-btn" data-tab="config">Configuration</button>
+        </div>
+
+        <!-- Login Tab -->
+        <div id="login" class="tab-content active">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="user@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Login</button>
+                    <button type="button" class="btn-secondary" onclick="clearForm('loginForm')">Clear</button>
+                </div>
+                <p class="info-text">Demo: user@example.com / password123</p>
+            </form>
+        </div>
+
+        <!-- Register Tab -->
+        <div id="register" class="tab-content">
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" placeholder="user@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerUsername">Username</label>
+                    <input type="text" id="registerUsername" placeholder="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="registerPassword" placeholder="••••••••" required>
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Register</button>
+                    <button type="button" class="btn-secondary" onclick="clearForm('registerForm')">Clear</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Test API Tab -->
+        <div id="test" class="tab-content">
+            <div class="form-group">
+                <label for="testEndpoint">Test Endpoint</label>
+                <select id="testEndpoint">
+                    <option value="health">/health</option>
+                    <option value="dashboard">/analytics/dashboard</option>
+                    <option value="analyses">/analyses</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button type="button" class="btn-primary" onclick="testAPI()">Test</button>
+                <button type="button" class="btn-secondary" onclick="clearTestResult()">Clear</button>
+            </div>
+            <div id="testResult" class="test-result" style="display:none;"></div>
+        </div>
+
+        <!-- Configuration Tab -->
+        <div id="config" class="tab-content">
+            <div class="form-group">
+                <label for="apiUrl">API Base URL</label>
+                <input type="text" id="apiUrl" placeholder="http://localhost:5000" value="http://localhost:5000">
+            </div>
+            <div class="form-group">
+                <label for="debugMode">Debug Mode</label>
+                <select id="debugMode">
+                    <option value="false">Disabled</option>
+                    <option value="true">Enabled</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button type="button" class="btn-primary" onclick="saveConfiguration()">Save Config</button>
+                <button type="button" class="btn-secondary" onclick="resetConfiguration()">Reset</button>
+            </div>
+            <p class="info-text">Configuration is saved to localStorage</p>
+        </div>
+
+        <div id="userInfo" style="display:none; margin-top:20px; padding-top:20px; border-top:1px solid #ddd;">
+            <h3 style="margin-bottom:15px; font-size:14px; color:#333;">User Information</h3>
+            <div class="status-box">
+                <div class="status-item">
+                    <span class="status-label">User ID:</span>
+                    <span class="status-value" id="userId">-</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Username:</span>
+                    <span class="status-value" id="userName">-</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">API Key:</span>
+                    <span class="status-value" id="apiKeyDisplay">-</span>
+                </div>
+            </div>
+            <button type="button" class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api-v2.js"></script>
+    <script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initApplication();
+        });
+
+        function initApplication() {
+            // Load configuration
+            document.getElementById('apiUrl').value = CONFIG.API_BASE_URL;
+            document.getElementById('debugMode').value = CONFIG.DEBUG_MODE;
+
+            // Check backend status
+            checkBackendStatus();
+
+            // Setup event listeners
+            setupEventListeners();
+
+            // Update auth status
+            updateAuthStatus();
+
+            // Auto-check backend every 30 seconds
+            setInterval(checkBackendStatus, 30000);
+        }
+
+        function setupEventListeners() {
+            // Tab navigation
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', switchTab);
+            });
+
+            // Forms
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+
+            // Config
+            document.getElementById('apiUrl').addEventListener('change', () => {
+                CONFIG.API_BASE_URL = document.getElementById('apiUrl').value;
+            });
+        }
+
+        async function checkBackendStatus() {
+            const statusEl = document.getElementById('backendStatus');
+            try {
+                const health = await AgentMeshAPI.checkHealth();
+                if (health.status === 'healthy') {
+                    statusEl.innerHTML = '<span class="status-icon">✓</span><span class="success">Connected</span>';
+                } else {
+                    statusEl.innerHTML = '<span class="status-icon">✗</span><span class="error">Unhealthy</span>';
+                }
+            } catch (error) {
+                statusEl.innerHTML = '<span class="status-icon">✗</span><span class="error">Disconnected</span>';
+            }
+        }
+
+        function updateAuthStatus() {
+            const userInfo = AuthManager.getUserInfo();
+            const authStatusEl = document.getElementById('authStatus');
+            const userInfoDiv = document.getElementById('userInfo');
+
+            if (userInfo.isAuthenticated) {
+                authStatusEl.innerHTML = `<span class="success">✓ ${userInfo.username}</span>`;
+                document.getElementById('userId').textContent = userInfo.userId;
+                document.getElementById('userName').textContent = userInfo.username;
+                document.getElementById('apiKeyDisplay').textContent = userInfo.apiKey || 'Not generated';
+                userInfoDiv.style.display = 'block';
+            } else {
+                authStatusEl.innerHTML = '<span class="error">✗ Not authenticated</span>';
+                userInfoDiv.style.display = 'none';
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            showAlert('Logging in...', 'success');
+
+            const result = await AuthManager.login(email, password);
+            if (result.success) {
+                showAlert('Login successful!', 'success');
+                setTimeout(() => {
+                    updateAuthStatus();
+                    clearForm('loginForm');
+                }, 1000);
+            } else {
+                showAlert(`Login failed: ${result.error}`, 'error');
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const email = document.getElementById('registerEmail').value;
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+
+            showAlert('Registering...', 'success');
+
+            const result = await AuthManager.register(email, username, password);
+            if (result.success) {
+                showAlert('Registration successful! You are now logged in.', 'success');
+                setTimeout(() => {
+                    updateAuthStatus();
+                    clearForm('registerForm');
+                }, 1000);
+            } else {
+                showAlert(`Registration failed: ${result.error}`, 'error');
+            }
+        }
+
+        async function testAPI() {
+            const endpoint = document.getElementById('testEndpoint').value;
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Testing...';
+
+            try {
+                let result;
+                if (endpoint === 'health') {
+                    result = await AgentMeshAPI.checkHealth();
+                } else if (endpoint === 'dashboard') {
+                    result = await AgentMeshAPI.getDashboardAnalytics();
+                } else if (endpoint === 'analyses') {
+                    result = await AgentMeshAPI.listAnalyses();
+                }
+
+                resultDiv.textContent = JSON.stringify(result, null, 2);
+                showAlert('API test successful!', 'success');
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+                showAlert('API test failed!', 'error');
+            }
+        }
+
+        function clearTestResult() {
+            document.getElementById('testResult').style.display = 'none';
+        }
+
+        function saveConfiguration() {
+            CONFIG.API_BASE_URL = document.getElementById('apiUrl').value;
+            CONFIG.DEBUG_MODE = document.getElementById('debugMode').value === 'true';
+            localStorage.setItem('agentmesh_config', JSON.stringify(CONFIG));
+            showAlert('Configuration saved!', 'success');
+        }
+
+        function resetConfiguration() {
+            document.getElementById('apiUrl').value = 'http://localhost:5000';
+            document.getElementById('debugMode').value = 'false';
+            localStorage.removeItem('agentmesh_config');
+            showAlert('Configuration reset!', 'success');
+        }
+
+        function logout() {
+            AuthManager.logout();
+            updateAuthStatus();
+            showAlert('Logged out successfully!', 'success');
+        }
+
+        function switchTab(e) {
+            const tabName = e.target.dataset.tab;
+
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            e.target.classList.add('active');
+        }
+
+        function clearForm(formId) {
+            document.getElementById(formId).reset();
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('statusAlert');
+            alert.textContent = message;
+            alert.className = `alert show ${type}`;
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

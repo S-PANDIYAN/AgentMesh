@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Performance Analysis - AgentMesh</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#eab308",
+                        "primary-container": "#facc15",
+                        "on-primary-fixed": "#231b00",
+                        "surface": "#ffffff",
+                        "surface-container": "#fafaf9",
+                        "on-surface": "#1a1a1a",
+                        "on-surface-variant": "#4d4632"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .dot-matrix {
+            background-image: radial-gradient(circle, #e5e5e5 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .code-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.05);
+        }
+        .chart-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e7e5e4;
+        }
+        .chart-label {
+            width: 120px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+        .chart-bar-fill {
+            flex: 1;
+            height: 24px;
+            background: linear-gradient(90deg, #eab308 0%, #facc15 100%);
+            border-radius: 4px;
+            position: relative;
+        }
+        .chart-value {
+            width: 50px;
+            text-align: right;
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 13px;
+        }
+        .issue-card {
+            border: 1px solid #e7e5e4;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        .issue-card:hover {
+            border-color: #eab308;
+            background: #fafaf9;
+        }
+        .severity-critical { border-left: 4px solid #dc2626; }
+        .severity-high { border-left: 4px solid #ea580c; }
+        .severity-medium { border-left: 4px solid #eab308; }
+        .severity-low { border-left: 4px solid #16a34a; }
+        .metric-card {
+            background: #fafaf9;
+            border: 1px solid #e7e5e4;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #eab308;
+            margin-bottom: 4px;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: #78716c;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .recommendation-box {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 12px;
+        }
+        .recommendation-title {
+            color: #065f46;
+            font-weight: 600;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+        .recommendation-text {
+            color: #047857;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body class="bg-white font-body text-on-surface overflow-hidden h-screen flex flex-col">
+
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white border-b border-stone-200 flex justify-between items-center px-6 h-14">
+    <div class="flex items-center gap-10">
+        <div class="flex items-center gap-2">
+            <div class="w-6 h-6 bg-primary-container flex items-center justify-center font-bold text-[10px] text-on-primary-fixed">AM</div>
+            <span class="text-lg font-bold tracking-tight text-on-surface uppercase font-headline">AgentMesh</span>
+        </div>
+        <div class="hidden md:flex items-center gap-6">
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('dashboard.html')">Dashboard</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('results.html')">Results</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-primary transition-colors cursor-pointer">Performance</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('agents.html')">Agents</a>
+        </div>
+    </div>
+    <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 px-3 py-1 bg-orange-100 border border-orange-300">
+            <span class="material-symbols-outlined text-sm text-orange-600">trending_down</span>
+            <span class="font-mono text-[10px] text-orange-700 font-medium">7 ISSUES</span>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<aside class="h-screen w-64 fixed left-0 top-14 bg-stone-50 border-r border-stone-200 flex flex-col py-6 gap-2 z-40">
+    <div class="px-6 mb-8">
+        <h3 class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">Navigation</h3>
+    </div>
+    <div class="flex flex-col">
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 transition-all cursor-pointer" onclick="goToPage('results.html')">
+            <span class="material-symbols-outlined text-lg">list_alt</span> Back to Results
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 transition-all cursor-pointer" onclick="goToPage('security.html')">
+            <span class="material-symbols-outlined text-lg">security</span> Security
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest bg-primary-container text-on-primary-fixed transition-all">
+            <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">speed</span> Performance
+        </a>
+    </div>
+</aside>
+
+<!-- Main Content -->
+<main class="ml-64 mt-14 p-8 flex-1 dot-matrix relative h-[calc(100vh-3.5rem)] overflow-auto">
+    <div class="max-w-5xl">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold font-headline mb-2 uppercase">Performance Analysis</h1>
+            <p class="text-stone-500 text-sm">Execution time: 1.8s | Analyzed 847 lines | 7 Performance issues found</p>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="grid grid-cols-4 gap-4 mb-8">
+            <div class="metric-card code-shadow">
+                <div class="metric-value">1.8s</div>
+                <div class="metric-label">Execution Time</div>
+            </div>
+            <div class="metric-card code-shadow">
+                <div class="metric-value">3</div>
+                <div class="metric-label">Critical Issues</div>
+            </div>
+            <div class="metric-card code-shadow">
+                <div class="metric-value">847</div>
+                <div class="metric-label">Lines Analyzed</div>
+            </div>
+            <div class="metric-card code-shadow">
+                <div class="metric-value">O(n²)</div>
+                <div class="metric-label">Worst Complexity</div>
+            </div>
+        </div>
+
+        <!-- Performance Distribution Chart -->
+        <div class="bg-white border border-stone-200 p-6 mb-8 code-shadow">
+            <h2 class="font-headline font-bold text-lg mb-6">Performance Issues Distribution</h2>
+            <div class="chart-bar">
+                <div class="chart-label">N+1 Queries</div>
+                <div style="width: 75%;">
+                    <div class="chart-bar-fill" style="width: 60%;"></div>
+                </div>
+                <div class="chart-value">3</div>
+            </div>
+            <div class="chart-bar">
+                <div class="chart-label">Inefficient Loops</div>
+                <div style="width: 75%;">
+                    <div class="chart-bar-fill" style="width: 40%;"></div>
+                </div>
+                <div class="chart-value">2</div>
+            </div>
+            <div class="chart-bar">
+                <div class="chart-label">Memory Leaks</div>
+                <div style="width: 75%;">
+                    <div class="chart-bar-fill" style="width: 25%;"></div>
+                </div>
+                <div class="chart-value">1</div>
+            </div>
+            <div class="chart-bar" style="border-bottom: none;">
+                <div class="chart-label">Cache Issues</div>
+                <div style="width: 75%;">
+                    <div class="chart-bar-fill" style="width: 15%;"></div>
+                </div>
+                <div class="chart-value">1</div>
+            </div>
+        </div>
+
+        <!-- Issues List -->
+        <h2 class="font-headline font-bold text-lg mb-4">Detailed Issues</h2>
+
+        <!-- Issue 1: N+1 Query -->
+        <div class="issue-card severity-high">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <h3 class="font-bold text-base">N+1 Query Problem (Line 112)</h3>
+                    <p class="text-sm text-stone-600 mt-1">Database queries executed in a loop causing exponential data retrieval</p>
+                </div>
+                <span style="background: #fed7aa; color: #92400e; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: bold;">HIGH</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-3"><strong>Impact:</strong> Potential timeout with large datasets, 10-100x slower than optimal</p>
+            <div style="background: #1a1a1a; color: #4ade80; padding: 12px; border-radius: 4px; font-family: 'JetBrains Mono'; font-size: 11px; overflow-x: auto; margin-bottom: 12px;">
+for (const user of users) {<br>
+&nbsp;&nbsp;const posts = await db.query(`SELECT * FROM posts WHERE user_id = ${user.id}`);<br>
+&nbsp;&nbsp;console.log(posts);<br>
+}
+            </div>
+            <div class="recommendation-box">
+                <div class="recommendation-title">FIX: Use JOIN or Batch Query</div>
+                <div class="recommendation-text">Execute a single database query with JOIN instead of querying in a loop. This reduces database round-trips from N queries to 1.</div>
+            </div>
+        </div>
+
+        <!-- Issue 2: Inefficient Loop -->
+        <div class="issue-card severity-medium">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <h3 class="font-bold text-base">Inefficient Loop - O(n²) Complexity (Line 234)</h3>
+                    <p class="text-sm text-stone-600 mt-1">Nested loops with array lookups causing quadratic time complexity</p>
+                </div>
+                <span style="background: #fef3c7; color: #92400e; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: bold;">MEDIUM</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-3"><strong>Impact:</strong> Execution time increases exponentially with data size (10x items = 100x slower)</p>
+            <div style="background: #1a1a1a; color: #4ade80; padding: 12px; border-radius: 4px; font-family: 'JetBrains Mono'; font-size: 11px; overflow-x: auto; margin-bottom: 12px;">
+for (let i = 0; i &lt; items.length; i++) {<br>
+&nbsp;&nbsp;for (let j = 0; j &lt; items.length; j++) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if (items[i].id === items[j].id) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// process<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;}<br>
+}
+            </div>
+            <div class="recommendation-box">
+                <div class="recommendation-title">FIX: Use Set or Map for lookups</div>
+                <div class="recommendation-text">Create a Set/Map from items first to achieve O(1) lookup time instead of O(n) array searches inside the loop.</div>
+            </div>
+        </div>
+
+        <!-- Issue 3: Memory Leak -->
+        <div class="issue-card severity-high">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <h3 class="font-bold text-base">Memory Leak - Event Listener Not Removed (Line 67)</h3>
+                    <p class="text-sm text-stone-600 mt-1">Event listener added but never removed, causing memory accumulation</p>
+                </div>
+                <span style="background: #fed7aa; color: #92400e; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: bold;">HIGH</span>
+            </div>
+            <p class="text-sm text-stone-700 mb-3"><strong>Impact:</strong> Memory usage grows over time, potential application crash after prolonged use</p>
+            <div class="recommendation-box">
+                <div class="recommendation-title">FIX: Remove event listeners in cleanup</div>
+                <div class="recommendation-text">Always remove event listeners when they're no longer needed. Use cleanup functions in React useEffect or similar patterns.</div>
+            </div>
+        </div>
+
+        <!-- Issue 4: Blocking Operation -->
+        <div class="issue-card severity-critical" style="display: none;">
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <h3 class="font-bold text-base">Blocking Synchronous Operation (Line 156)</h3>
+                    <p class="text-sm text-stone-600 mt-1">Synchronous file read blocking event loop</p>
+                </div>
+                <span style="background: #fecaca; color: #991b1b; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: bold;">CRITICAL</span>
+            </div>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="mt-8 grid grid-cols-3 gap-4">
+            <div class="bg-green-50 border border-green-200 p-4 text-center">
+                <div class="font-bold text-green-600">7</div>
+                <div class="text-xs text-green-700 mt-1">Issues Found</div>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 p-4 text-center">
+                <div class="font-bold text-blue-600">~45%</div>
+                <div class="text-xs text-blue-700 mt-1">Potential Improvement</div>
+            </div>
+            <div class="bg-purple-50 border border-purple-200 p-4 text-center">
+                <div class="font-bold text-purple-600">Est. 1.2s</div>
+                <div class="text-xs text-purple-700 mt-1">Optimized Time</div>
+            </div>
+        </div>
+
+        <!-- Export -->
+        <div class="mt-8 pb-4 text-center">
+            <button class="px-6 py-3 bg-primary-container text-on-primary-fixed font-headline font-bold uppercase hover:bg-primary transition-colors">
+                Export Performance Report
+            </button>
+        </div>
+    </div>
+</main>
+
+<script>
+function goToPage(page) {
+    window.location.href = page;
+}
+</script>
+
+</body>
+</html>

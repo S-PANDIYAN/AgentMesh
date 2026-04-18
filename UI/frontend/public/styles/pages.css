@@ -1,0 +1,329 @@
+/* ============================================
+   AgentMesh SPA - Page-Specific Styles
+   ============================================ */
+
+/* Dashboard Page */
+.dashboard-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    align-items: start;
+}
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.dashboard-stats > div {
+    background-color: #fafaf9;
+    border: 1px solid #e7e5e4;
+    padding: 1rem;
+    text-align: center;
+}
+
+.upload-zone {
+    border: 2px dashed #e7e5e4;
+    padding: 3rem;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.upload-zone:hover {
+    border-color: #eab308;
+    background-color: rgba(234, 179, 8, 0.02);
+}
+
+/* Results Page */
+.finding {
+    border-left: 4px solid #e7e5e4;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+}
+
+.finding.critical {
+    border-left-color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.02);
+}
+
+.finding.high {
+    border-left-color: #f97316;
+    background-color: rgba(249, 115, 22, 0.02);
+}
+
+.finding.medium {
+    border-left-color: #eab308;
+    background-color: rgba(234, 179, 8, 0.02);
+}
+
+.finding.low {
+    border-left-color: #4ade80;
+    background-color: rgba(74, 222, 128, 0.02);
+}
+
+/* Agents Page */
+.agent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.agent-card {
+    background-color: #ffffff;
+    border: 1px solid #e7e5e4;
+    padding: 1.5rem;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease-in-out;
+}
+
+.agent-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.08);
+}
+
+.agent-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.agent-icon {
+    font-size: 2rem;
+}
+
+.agent-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.agent-stat {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+/* Tasks Page */
+.task-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.task-header {
+    background-color: #fafaf9;
+    padding: 1rem;
+    border-bottom: 1px solid #e7e5e4;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.task-row {
+    padding: 1rem;
+    border-bottom: 1px solid #e7e5e4;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+    align-items: center;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.task-row:hover {
+    background-color: #fafaf9;
+}
+
+/* Security Page */
+.vulnerability {
+    background-color: #ffffff;
+    border-left: 4px solid #ef4444;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.05);
+}
+
+.vulnerability.high {
+    border-left-color: #f97316;
+}
+
+.vulnerability-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.vulnerability-score {
+    background-color: #fee2e2;
+    border: 1px solid #fecaca;
+    padding: 1rem;
+    text-align: center;
+    border-radius: 2px;
+}
+
+.vulnerability-score.high {
+    background-color: #fed7aa;
+    border-color: #fdba74;
+}
+
+.code-block {
+    background-color: #fafaf9;
+    border: 1px solid #e7e5e4;
+    padding: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+/* Performance Page */
+.performance-issue {
+    border-left: 4px solid #ef4444;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+}
+
+.performance-issue.high {
+    border-left-color: #f97316;
+}
+
+.performance-issue.medium {
+    border-left-color: #eab308;
+}
+
+/* Quality Page */
+.quality-score {
+    text-align: center;
+    padding: 1.5rem;
+    background-color: #fafaf9;
+    border: 1px solid #e7e5e4;
+}
+
+.quality-score-value {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #eab308;
+    line-height: 1;
+}
+
+.quality-score-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: #78716b;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+}
+
+/* Settings Page */
+.settings-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid #e7e5e4;
+    margin-bottom: 2rem;
+}
+
+.settings-tab {
+    padding: 1rem 1.5rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease-in-out;
+    color: #78716b;
+}
+
+.settings-tab:hover {
+    color: #1c1917;
+}
+
+.settings-tab.active {
+    border-bottom-color: #eab308;
+    color: #1c1917;
+}
+
+.settings-section {
+    margin-bottom: 2rem;
+}
+
+.settings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e7e5e4;
+}
+
+.settings-row:last-child {
+    border-bottom: none;
+}
+
+.settings-label {
+    flex: 1;
+}
+
+.settings-control {
+    flex: 0 0 auto;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeInUp 0.3s ease-in-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .agent-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-header {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .settings-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .settings-control {
+        width: 100%;
+    }
+}

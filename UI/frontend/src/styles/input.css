@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Styles */
+body {
+  @apply font-body text-on-background;
+}
+
+.font-headline {
+  @apply font-headline;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Utility Classes */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.transition-smooth {
+  @apply transition-all duration-200;
+}
+
+.hover-lift {
+  @apply hover:shadow-lg hover:scale-105 transition-smooth;
+}
+
+/* Selection */
+::selection {
+  @apply bg-primary-container text-on-primary-fixed;
+}

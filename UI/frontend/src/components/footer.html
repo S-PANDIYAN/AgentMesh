@@ -1,0 +1,32 @@
+<!-- Footer Component -->
+<footer id="footer" class="fixed bottom-0 w-full h-12 z-50 bg-[#231b00] dark:bg-black flex justify-start items-center px-6 space-x-12 shadow-[0_-10px_30px_rgba(250,204,21,0.1)]">
+  <a class="flex items-center gap-2 text-white/40 font-mono text-[10px] uppercase hover:text-white transition-colors active:opacity-50 cursor-pointer">
+    <span class="material-symbols-outlined text-sm">list_alt</span> Live Logs
+  </a>
+  <a class="flex items-center gap-2 text-[#FACC15] bg-[#FACC15]/10 px-4 h-full font-mono text-[10px] uppercase transition-colors active:opacity-50 cursor-pointer">
+    <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">query_stats</span> Metrics
+  </a>
+  <a class="flex items-center gap-2 text-white/40 font-mono text-[10px] uppercase hover:text-white transition-colors active:opacity-50 cursor-pointer">
+    <span class="material-symbols-outlined text-sm">biotech</span> Diagnostics
+  </a>
+  <a class="flex items-center gap-2 text-white/40 font-mono text-[10px] uppercase hover:text-white transition-colors active:opacity-50 cursor-pointer">
+    <span class="material-symbols-outlined text-sm">keyboard_arrow_right</span> Terminal
+  </a>
+</footer>
+
+<script>
+// Footer tab switching
+document.querySelectorAll('#footer a').forEach((tab, index) => {
+  tab.addEventListener('click', (e) => {
+    e.preventDefault();
+    // Remove active state from all tabs
+    document.querySelectorAll('#footer a').forEach(t => {
+      t.classList.remove('text-[#FACC15]', 'bg-[#FACC15]/10');
+      t.classList.add('text-white/40');
+    });
+    // Add active state to clicked tab
+    tab.classList.remove('text-white/40');
+    tab.classList.add('text-[#FACC15]', 'bg-[#FACC15]/10');
+  });
+});
+</script>

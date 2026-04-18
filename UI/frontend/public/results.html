@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Analysis Results - AgentMesh</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#eab308",
+                        "primary-container": "#facc15",
+                        "on-primary-fixed": "#231b00",
+                        "surface": "#ffffff",
+                        "surface-container": "#fafaf9",
+                        "on-surface": "#1a1a1a",
+                        "on-surface-variant": "#4d4632"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .dot-matrix {
+            background-image: radial-gradient(circle, #e5e5e5 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .code-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.05);
+        }
+        .severity-critical { border-left: 4px solid #dc2626; background-color: #fee2e2; }
+        .severity-high { border-left: 4px solid #ea580c; background-color: #fed7aa; }
+        .severity-medium { border-left: 4px solid #eab308; background-color: #fef3c7; }
+        .severity-low { border-left: 4px solid #16a34a; background-color: #dcfce7; }
+        .finding-item {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .finding-item:hover {
+            transform: translateX(4px);
+        }
+    </style>
+</head>
+<body class="bg-white font-body text-on-surface overflow-hidden h-screen flex flex-col">
+
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white border-b border-stone-200 flex justify-between items-center px-6 h-14">
+    <div class="flex items-center gap-10">
+        <div class="flex items-center gap-2">
+            <div class="w-6 h-6 bg-primary-container flex items-center justify-center font-bold text-[10px] text-on-primary-fixed">AM</div>
+            <span class="text-lg font-bold tracking-tight text-on-surface uppercase font-headline">AgentMesh</span>
+        </div>
+        <div class="hidden md:flex items-center gap-6">
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('dashboard.html')">Dashboard</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('index.html')">Orchestrator</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-primary transition-colors cursor-pointer">Results</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('tasks.html')">Task Queue</a>
+        </div>
+    </div>
+    <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 px-3 py-1 bg-stone-100 border border-stone-200">
+            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="font-mono text-[10px] text-stone-500 font-medium">ACTIVE</span>
+        </div>
+        <button class="p-2 text-stone-400 hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-xl">search</span></button>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<aside class="h-screen w-64 fixed left-0 top-14 bg-stone-50 border-r border-stone-200 flex flex-col py-6 gap-2 z-40">
+    <div class="px-6 mb-8">
+        <h3 class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">Navigation</h3>
+    </div>
+    <div class="flex flex-col">
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 transition-all cursor-pointer" onclick="goToPage('dashboard.html')">
+            <span class="material-symbols-outlined text-lg">home</span> Dashboard
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest bg-primary-container text-on-primary-fixed transition-all">
+            <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">list_alt</span> Results
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 transition-all cursor-pointer" onclick="goToPage('tasks.html')">
+            <span class="material-symbols-outlined text-lg">check_circle</span> Task Queue
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 transition-all cursor-pointer" onclick="goToPage('agents.html')">
+            <span class="material-symbols-outlined text-lg">smart_toy</span> Agents
+        </a>
+    </div>
+</aside>
+
+<!-- Main Content -->
+<main class="ml-64 mt-14 p-8 flex-1 dot-matrix relative h-[calc(100vh-3.5rem)] overflow-auto">
+    <div class="max-w-7xl">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold font-headline mb-2 uppercase">Analysis Results</h1>
+            <p class="text-stone-500 text-sm">validator.ts - Completed 5 minutes ago</p>
+        </div>
+
+        <!-- Filters & Summary -->
+        <div class="grid grid-cols-4 gap-4 mb-8">
+            <div class="bg-white border border-stone-200 p-4 code-shadow">
+                <div class="font-mono text-[10px] font-bold text-stone-400 uppercase mb-2">Critical</div>
+                <div class="text-3xl font-black text-red-600">3</div>
+            </div>
+            <div class="bg-white border border-stone-200 p-4 code-shadow">
+                <div class="font-mono text-[10px] font-bold text-stone-400 uppercase mb-2">High</div>
+                <div class="text-3xl font-black text-orange-600">7</div>
+            </div>
+            <div class="bg-white border border-stone-200 p-4 code-shadow">
+                <div class="font-mono text-[10px] font-bold text-stone-400 uppercase mb-2">Medium</div>
+                <div class="text-3xl font-black text-yellow-600">12</div>
+            </div>
+            <div class="bg-white border border-stone-200 p-4 code-shadow">
+                <div class="font-mono text-[10px] font-bold text-stone-400 uppercase mb-2">Swarm Confidence</div>
+                <div class="text-3xl font-black text-primary">94.2%</div>
+            </div>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="flex gap-3 mb-6">
+            <button class="px-4 py-2 bg-primary-container text-on-primary-fixed font-mono text-[10px] font-bold hover:bg-primary transition-colors">ALL</button>
+            <button class="px-4 py-2 bg-white border border-stone-200 font-mono text-[10px] font-bold text-red-600 hover:bg-red-50 transition-colors">CRITICAL</button>
+            <button class="px-4 py-2 bg-white border border-stone-200 font-mono text-[10px] font-bold text-orange-600 hover:bg-orange-50 transition-colors">HIGH</button>
+            <button class="px-4 py-2 bg-white border border-stone-200 font-mono text-[10px] font-bold text-yellow-600 hover:bg-yellow-50 transition-colors">MEDIUM</button>
+        </div>
+
+        <!-- Grouped Results by Agent -->
+        <div class="space-y-8">
+            <!-- Security Agent Findings -->
+            <div class="bg-stone-50 border border-stone-200">
+                <div class="bg-red-600 text-white px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">security</span>
+                        <div>
+                            <h2 class="font-headline font-bold text-lg">Security Analyzer</h2>
+                            <p class="text-[12px] text-red-100">3 Critical Issues Found</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 space-y-3">
+                    <div class="finding-item severity-critical">
+                        <div class="font-bold text-red-700 mb-1">SQL Injection Vulnerability</div>
+                        <div class="text-[12px] text-red-600 mb-2">Line 84 in validator.ts</div>
+                        <div class="text-[10px] text-stone-600">Database query constructed with user input without parameterization. Use prepared statements to prevent SQL injection attacks.</div>
+                        <div class="mt-2 text-[10px] font-mono bg-stone-100 p-2 rounded">const query = "SELECT * FROM users WHERE id = " + userId;</div>
+                    </div>
+
+                    <div class="finding-item severity-high">
+                        <div class="font-bold text-orange-700 mb-1">Missing Authentication Check</div>
+                        <div class="text-[12px] text-orange-600 mb-2">Line 156 in validator.ts</div>
+                        <div class="text-[10px] text-stone-600">API endpoint missing authentication validation. Add token verification before processing requests.</div>
+                    </div>
+
+                    <div class="finding-item severity-high">
+                        <div class="font-bold text-orange-700 mb-1">Hardcoded API Key</div>
+                        <div class="text-[12px] text-orange-600 mb-2">Line 23 in validator.ts</div>
+                        <div class="text-[10px] text-stone-600">API keys should never be hardcoded in source files. Use environment variables instead.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Agent Findings -->
+            <div class="bg-stone-50 border border-stone-200">
+                <div class="bg-blue-600 text-white px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">speed</span>
+                        <div>
+                            <h2 class="font-headline font-bold text-lg">Performance Agent</h2>
+                            <p class="text-[12px] text-blue-100">4 Issues Detected</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 space-y-3">
+                    <div class="finding-item severity-high">
+                        <div class="font-bold text-orange-700 mb-1">N+1 Query Problem</div>
+                        <div class="text-[12px] text-orange-600 mb-2">Line 112 in validator.ts</div>
+                        <div class="text-[10px] text-stone-600">Loop executes database query per iteration. Use JOIN or batch loading to reduce queries.</div>
+                    </div>
+
+                    <div class="finding-item severity-medium">
+                        <div class="font-bold text-yellow-700 mb-1">Inefficient Loop</div>
+                        <div class="text-[12px] text-yellow-600 mb-2">Line 234 in validator.ts</div>
+                        <div class="text-[10px] text-stone-600">Array lookup in inner loop causes O(n²) complexity. Consider using a Set or Map.</div>
+                    </div>
+
+                    <div class="finding-item severity-medium">
+                        <div class="font-bold text-yellow-700 mb-1">Memory Leak Risk</div>
+                        <div class="text-[12px] text-yellow-600 mb-2">Line 67 in validator.ts</div>
+                        <div class="text-[10px] text-stone-600">Event listener registered without cleanup. Add removeEventListener in cleanup function.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Quality Agent Findings -->
+            <div class="bg-stone-50 border border-stone-200">
+                <div class="bg-purple-600 text-white px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">code</span>
+                        <div>
+                            <h2 class="font-headline font-bold text-lg">Code Quality Agent</h2>
+                            <p class="text-[12px] text-purple-100">8 Style Issues</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 space-y-3">
+                    <div class="finding-item severity-low">
+                        <div class="font-bold text-green-700 mb-1">Missing Type Annotations</div>
+                        <div class="text-[12px] text-green-600 mb-2">Lines 45, 67, 89 in validator.ts</div>
+                        <div class="text-[10px] text-stone-600">Add TypeScript type hints for better code clarity and IDE support.</div>
+                    </div>
+
+                    <div class="finding-item severity-low">
+                        <div class="font-bold text-green-700 mb-1">Unused Variables</div>
+                        <div class="text-[12px] text-green-600 mb-2">Line 156, 234 in validator.ts</div>
+                        <div class="text-[10px] text-stone-600">Variables declared but never used. Remove or utilize in code logic.</div>
+                    </div>
+
+                    <div class="finding-item severity-medium">
+                        <div class="font-bold text-yellow-700 mb-1">Cyclomatic Complexity Too High</div>
+                        <div class="text-[12px] text-yellow-600 mb-2">Function validateUser() - Complexity: 12</div>
+                        <div class="text-[10px] text-stone-600">Function has too many branches. Consider breaking into smaller functions.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Action -->
+        <div class="mt-8 bg-white border border-stone-200 p-6 code-shadow text-center">
+            <button class="px-6 py-3 bg-primary-container text-on-primary-fixed font-headline font-bold uppercase hover:bg-primary transition-colors">
+                Export Full Report →
+            </button>
+        </div>
+    </div>
+</main>
+
+<script>
+function goToPage(page) {
+    window.location.href = page;
+}
+</script>
+
+</body>
+</html>

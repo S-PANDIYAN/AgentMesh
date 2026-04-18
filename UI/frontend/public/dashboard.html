@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AgentMesh | Dev-Centric Orchestrator</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#eab308",
+                        "primary-container": "#facc15",
+                        "on-primary-fixed": "#231b00",
+                        "surface": "#ffffff",
+                        "surface-container": "#fafaf9",
+                        "on-surface": "#1a1a1a",
+                        "on-surface-variant": "#4d4632"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .dot-matrix {
+            background-image: radial-gradient(circle, #e5e5e5 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .code-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.05);
+        }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+    </style>
+</head>
+<body class="bg-white font-body text-on-surface overflow-hidden h-screen flex flex-col">
+
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white border-b border-stone-200 flex justify-between items-center px-6 h-14">
+    <div class="flex items-center gap-10">
+        <div class="flex items-center gap-2">
+            <div class="w-6 h-6 bg-primary-container flex items-center justify-center font-bold text-[10px] text-on-primary-fixed">AM</div>
+            <span class="text-lg font-bold tracking-tight text-on-surface uppercase font-headline">AgentMesh</span>
+        </div>
+        <div class="hidden md:flex items-center gap-6">
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer page-nav" data-page="dashboard">Dashboard</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer page-nav" data-page="orchestrator">Orchestrator</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer page-nav" data-page="security">Security</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer page-nav" data-page="pr-review">PR Review</a>
+        </div>
+    </div>
+    <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 px-3 py-1 bg-stone-100 border border-stone-200">
+            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="font-mono text-[10px] text-stone-500 font-medium">NODE_STABLE</span>
+        </div>
+        <button class="p-2 text-stone-400 hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-xl">search</span></button>
+        <button class="p-2 text-stone-400 hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-xl">settings</span></button>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<aside class="h-screen w-64 fixed left-0 top-14 bg-stone-50 border-r border-stone-200 flex flex-col py-6 gap-2 z-40">
+    <div class="px-6 mb-8">
+        <h3 class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">Core Infrastructure</h3>
+        <p class="text-[10px] font-mono text-primary-container bg-stone-900 px-2 py-0.5 inline-block mt-1">v4.8.2-stable</p>
+    </div>
+    <div class="flex flex-col">
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest bg-primary-container text-on-primary-fixed hover:bg-primary transition-all" data-page="policy" href="#policy">
+            <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">security</span> 
+            Policy Guard
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 hover:text-on-surface transition-all cursor-pointer" data-page="integrity">
+            <span class="material-symbols-outlined text-lg">schema</span> Data Integrity
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 hover:text-on-surface transition-all cursor-pointer" data-page="throughput">
+            <span class="material-symbols-outlined text-lg">analytics</span> Throughput
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 hover:text-on-surface transition-all cursor-pointer" data-page="audit">
+            <span class="material-symbols-outlined text-lg">history_edu</span> Audit Logs
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 hover:text-on-surface transition-all cursor-pointer" data-page="versioning">
+            <span class="material-symbols-outlined text-lg">rebase_edit</span> Versioning
+        </a>
+    </div>
+    <div class="mt-auto px-6 mb-14">
+        <button class="w-full bg-stone-900 text-primary-container py-3 font-mono font-bold text-[10px] tracking-widest uppercase hover:bg-stone-800 transition-colors border border-stone-800">
+            INIT NEW CLUSTER
+        </button>
+    </div>
+</aside>
+
+<!-- Main Content -->
+<main class="ml-64 mt-14 p-8 flex-1 dot-matrix relative h-[calc(100vh-3.5rem)] overflow-auto">
+    <div id="dashboard" class="page-content active">
+        <div class="grid grid-cols-12 gap-8 h-full">
+            <!-- Column 1: Code Logic (4 Units) -->
+            <div class="col-span-4 flex flex-col gap-6">
+                <div class="bg-white border border-stone-200 flex-1 flex flex-col code-shadow">
+                    <div class="bg-stone-50 px-4 py-2.5 flex justify-between items-center border-b border-stone-200">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-stone-400">code</span>
+                            <span class="font-mono text-[10px] font-bold text-stone-500">core/logic/validator.ts</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 p-4 font-mono text-[10px] leading-relaxed bg-stone-100 overflow-y-auto">
+                        <div class="text-stone-400">import { Orchestrator } from "@mesh/core";</div>
+                        <div class="text-stone-400">import { AgentPool } from "@mesh/types";</div><br/>
+                        <div class="text-primary">const</div><div>core = <span class="text-primary">new</span> Orchestrator({</div>
+                        <div class="ml-4">nodeId: "CLUSTER_01",</div>
+                        <div class="ml-4">agentCount: <span class="text-primary">5</span></div>
+                        <div>});</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 2: Data Reconciliation (5 Units) -->
+            <div class="col-span-5 flex flex-col gap-6">
+                <div class="bg-white border border-stone-200 flex flex-col h-full code-shadow">
+                    <div class="p-8">
+                        <h2 class="font-headline text-3xl font-bold uppercase tracking-tight mb-4">Logical Diff</h2>
+                        <p class="font-mono text-[10px] text-stone-400 mb-8 uppercase tracking-widest font-bold">Arbitrating concurrent state changes</p>
+                        <div class="relative h-48 bg-stone-50 border border-stone-100 flex items-center justify-center">
+                            <svg viewBox="0 0 400 300" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                                <path class="stroke-primary-container stroke-1 fill-none" d="M50,150 L150,50 L250,50 L350,150 L250,250 L150,250 Z"></path>
+                                <circle class="fill-primary-container" cx="50" cy="150" r="4"></circle>
+                                <circle class="fill-primary-container" cx="150" cy="50" r="4"></circle>
+                                <circle class="fill-primary-container" cx="250" cy="50" r="4"></circle>
+                                <circle class="fill-primary-container" cx="350" cy="150" r="4"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 3: Metrics (3 Units) -->
+            <div class="col-span-3 flex flex-col gap-4">
+                <div class="bg-stone-900 text-primary-container p-6">
+                    <div class="font-mono text-[10px] font-bold uppercase tracking-widest mb-4">Cluster Topology</div>
+                    <div class="text-4xl font-black mb-2">98.4%</div>
+                    <div class="text-stone-400 text-xs">System Uptime</div>
+                </div>
+                <div class="bg-primary-container text-on-primary-fixed p-6">
+                    <div class="font-mono text-[10px] font-bold uppercase tracking-widest mb-4">Agents Active</div>
+                    <div class="text-4xl font-black mb-2">5/5</div>
+                    <div class="text-on-primary-fixed/70 text-xs">All Operational</div>
+                </div>
+                <div class="bg-white border border-stone-200 p-4 flex-1">
+                    <div class="font-mono text-[10px] font-bold text-stone-400 uppercase mb-3">Runtime Feed</div>
+                    <div class="font-mono text-[8px] text-stone-600 space-y-1">
+                        <div>12:22:01 [INFO] Cluster heart-beat verified</div>
+                        <div>12:21:58 [WARN] High memory usage...</div>
+                        <div>12:21:45 System update published</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="orchestrator" class="page-content">
+        <div class="max-w-6xl">
+            <h1 class="text-4xl font-bold font-headline mb-6">Orchestrator</h1>
+            <div class="bg-white border border-stone-200 p-8">
+                <p class="text-on-surface-variant">Orchestrator configuration and management coming soon...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="security" class="page-content">
+        <div class="max-w-6xl">
+            <h1 class="text-4xl font-bold font-headline mb-6">Security Analysis</h1>
+            <div class="grid grid-cols-3 gap-8">
+                <div class="col-span-2 bg-white border border-stone-200 p-8">
+                    <h2 class="text-2xl font-bold font-headline mb-6 uppercase">Vulnerability Log</h2>
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-red-500 bg-red-50 p-4">
+                            <div class="font-bold text-red-600 text-sm uppercase mb-2">Critical: SQL Injection Vector</div>
+                            <div class="text-xs text-stone-600">CVE-2024-0922 | Risk: 8.8/10</div>
+                        </div>
+                        <div class="border-l-4 border-yellow-500 bg-yellow-50 p-4">
+                            <div class="font-bold text-yellow-600 text-sm uppercase mb-2">High: Auth Bypass</div>
+                            <div class="text-xs text-stone-600">CVE-2024-1104 | Risk: 7.2/10</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white border border-stone-200 p-8">
+                    <div class="font-headline text-xs font-bold tracking-widest text-primary mb-4">confidence</div>
+                    <div class="text-5xl font-black mb-2">94%</div>
+                    <div class="text-stone-400 text-xs">Analysis Complete</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pr-review" class="page-content">
+        <div class="max-w-6xl">
+            <h1 class="text-4xl font-bold font-headline mb-6">PR #142 Analysis</h1>
+            <div class="grid grid-cols-3 gap-8">
+                <div class="bg-white border border-stone-200 p-8">
+                    <div class="font-mono text-[10px] font-bold text-primary uppercase mb-4">Safety Score</div>
+                    <div class="text-5xl font-black mb-4">82</div>
+                    <div class="text-stone-400 text-xs">Ready for Merge</div>
+                </div>
+                <div class="bg-primary-container text-on-primary-fixed border border-stone-200 p-8">
+                    <div class="font-mono text-[10px] font-bold uppercase mb-4">Critical Issues</div>
+                    <div class="text-5xl font-black mb-4">03</div>
+                    <div class="text-on-primary-fixed/70 text-xs">Requires Review</div>
+                </div>
+                <div class="bg-white border border-stone-200 p-8">
+                    <div class="font-mono text-[10px] font-bold text-primary uppercase mb-4">Swarm Confidence</div>
+                    <div class="text-5xl font-black mb-4">98.4%</div>
+                    <div class="text-stone-400 text-xs">Unanimous Decision</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+// Page navigation
+document.querySelectorAll('.page-nav').forEach(nav => {
+    nav.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = nav.dataset.page;
+        
+        document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+        const pageEl = document.getElementById(page);
+        if (pageEl) pageEl.classList.add('active');
+    });
+});
+
+// Sidebar navigation
+document.querySelectorAll('aside a').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = link.dataset.page;
+        
+        // Update sidebar active state
+        document.querySelectorAll('aside a').forEach(a => {
+            a.classList.remove('bg-primary-container', 'text-on-primary-fixed');
+            a.classList.add('text-stone-500', 'hover:bg-stone-100');
+        });
+        link.classList.remove('text-stone-500', 'hover:bg-stone-100');
+        link.classList.add('bg-primary-container', 'text-on-primary-fixed');
+        
+        document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+        const pageEl = document.getElementById(page);
+        if (pageEl) pageEl.classList.add('active');
+    });
+});
+</script>
+
+</body>
+</html>

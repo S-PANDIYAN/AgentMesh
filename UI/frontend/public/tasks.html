@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Task Queue - AgentMesh</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#eab308",
+                        "primary-container": "#facc15",
+                        "on-primary-fixed": "#231b00",
+                        "surface": "#ffffff",
+                        "surface-container": "#fafaf9",
+                        "on-surface": "#1a1a1a",
+                        "on-surface-variant": "#4d4632"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .dot-matrix {
+            background-image: radial-gradient(circle, #e5e5e5 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .code-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.05);
+        }
+        .task-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #f5f5f4;
+            transition: all 0.2s ease;
+        }
+        .task-row:hover {
+            background-color: #fafaf9;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-complete { background-color: #d1fae5; color: #065f46; }
+        .status-processing { background-color: #dbeafe; color: #1e40af; animation: pulse 2s infinite; }
+        .status-queued { background-color: #e5e7eb; color: #374151; }
+        .status-error { background-color: #fee2e2; color: #991b1b; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background-color: #e5e7eb;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #eab308;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-white font-body text-on-surface overflow-hidden h-screen flex flex-col">
+
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white border-b border-stone-200 flex justify-between items-center px-6 h-14">
+    <div class="flex items-center gap-10">
+        <div class="flex items-center gap-2">
+            <div class="w-6 h-6 bg-primary-container flex items-center justify-center font-bold text-[10px] text-on-primary-fixed">AM</div>
+            <span class="text-lg font-bold tracking-tight text-on-surface uppercase font-headline">AgentMesh</span>
+        </div>
+        <div class="hidden md:flex items-center gap-6">
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('dashboard.html')">Dashboard</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('index.html')">Orchestrator</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors cursor-pointer" onclick="goToPage('results.html')">Results</a>
+            <a class="text-[11px] font-bold uppercase tracking-widest text-primary transition-colors cursor-pointer">Task Queue</a>
+        </div>
+    </div>
+    <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 px-3 py-1 bg-stone-100 border border-stone-200">
+            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="font-mono text-[10px] text-stone-500 font-medium">ACTIVE</span>
+        </div>
+        <button class="p-2 text-stone-400 hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-xl">search</span></button>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<aside class="h-screen w-64 fixed left-0 top-14 bg-stone-50 border-r border-stone-200 flex flex-col py-6 gap-2 z-40">
+    <div class="px-6 mb-8">
+        <h3 class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">Navigation</h3>
+    </div>
+    <div class="flex flex-col">
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 transition-all cursor-pointer" onclick="goToPage('dashboard.html')">
+            <span class="material-symbols-outlined text-lg">home</span> Dashboard
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 transition-all cursor-pointer" onclick="goToPage('results.html')">
+            <span class="material-symbols-outlined text-lg">list_alt</span> Results
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest bg-primary-container text-on-primary-fixed transition-all">
+            <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">check_circle</span> Task Queue
+        </a>
+        <a class="flex items-center gap-3 px-6 py-2.5 font-headline text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 transition-all cursor-pointer" onclick="goToPage('agents.html')">
+            <span class="material-symbols-outlined text-lg">smart_toy</span> Agents
+        </a>
+    </div>
+</aside>
+
+<!-- Main Content -->
+<main class="ml-64 mt-14 p-8 flex-1 dot-matrix relative h-[calc(100vh-3.5rem)] overflow-auto">
+    <div class="max-w-7xl">
+        <!-- Header -->
+        <div class="mb-8 flex justify-between items-start">
+            <div>
+                <h1 class="text-4xl font-bold font-headline mb-2 uppercase">Task Queue</h1>
+                <p class="text-stone-500 text-sm">12 Total | 1 Processing | 8 Complete | 3 Queued</p>
+            </div>
+            <div class="flex gap-2">
+                <button class="px-4 py-2 bg-primary-container text-on-primary-fixed font-mono text-[10px] font-bold hover:bg-primary transition-colors code-shadow">Refresh</button>
+                <button class="px-4 py-2 bg-white border border-stone-200 font-mono text-[10px] font-bold hover:bg-stone-50 transition-colors">Export</button>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="grid grid-cols-4 gap-4 mb-8">
+            <div class="bg-white border border-stone-200 p-4 code-shadow">
+                <div class="font-mono text-[10px] font-bold text-stone-400 uppercase mb-2">Total Tasks</div>
+                <div class="text-3xl font-black text-on-surface">12</div>
+            </div>
+            <div class="bg-white border border-stone-200 p-4 code-shadow">
+                <div class="font-mono text-[10px] font-bold text-stone-400 uppercase mb-2">Processing</div>
+                <div class="text-3xl font-black text-blue-600">1</div>
+            </div>
+            <div class="bg-white border border-stone-200 p-4 code-shadow">
+                <div class="font-mono text-[10px] font-bold text-stone-400 uppercase mb-2">Completed</div>
+                <div class="text-3xl font-black text-green-600">8</div>
+            </div>
+            <div class="bg-white border border-stone-200 p-4 code-shadow">
+                <div class="font-mono text-[10px] font-bold text-stone-400 uppercase mb-2">Avg Time</div>
+                <div class="text-3xl font-black text-primary">2.3s</div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex gap-2 mb-6 border-b border-stone-200">
+            <button onclick="filterTasks('all')" class="px-4 py-3 font-mono text-[10px] font-bold text-primary border-b-2 border-primary">ALL (12)</button>
+            <button onclick="filterTasks('processing')" class="px-4 py-3 font-mono text-[10px] font-bold text-stone-400 hover:text-on-surface">PROCESSING (1)</button>
+            <button onclick="filterTasks('complete')" class="px-4 py-3 font-mono text-[10px] font-bold text-stone-400 hover:text-on-surface">COMPLETE (8)</button>
+            <button onclick="filterTasks('queued')" class="px-4 py-3 font-mono text-[10px] font-bold text-stone-400 hover:text-on-surface">QUEUED (3)</button>
+        </div>
+
+        <!-- Tasks Table Header -->
+        <div class="bg-stone-50 border border-stone-200 mb-0">
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px; padding: 12px;" class="font-mono text-[10px] font-bold text-stone-400 uppercase">
+                <div>File Name</div>
+                <div>Status</div>
+                <div>Progress</div>
+                <div>Time</div>
+                <div>Action</div>
+            </div>
+        </div>
+
+        <!-- Tasks List -->
+        <div class="bg-white border border-t-0 border-stone-200 code-shadow">
+            <!-- Task 1 - Processing -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px;" class="task-row">
+                <div>
+                    <div class="font-bold text-on-surface">checkout-flow.jsx</div>
+                    <div class="text-[11px] text-stone-500 mt-1">Started 30 seconds ago</div>
+                </div>
+                <div><span class="status-badge status-processing">Processing</span></div>
+                <div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 65%;"></div></div>
+                    <div class="text-[9px] text-stone-400 mt-1">65%</div>
+                </div>
+                <div class="text-stone-600 font-mono text-[10px]">0.30s</div>
+                <div><button class="text-primary hover:text-primary-container font-bold text-[10px]">View</button></div>
+            </div>
+
+            <!-- Task 2 - Completed -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px;" class="task-row">
+                <div>
+                    <div class="font-bold text-on-surface">validator.ts</div>
+                    <div class="text-[11px] text-stone-500 mt-1">Completed 5 minutes ago</div>
+                </div>
+                <div><span class="status-badge status-complete">Complete</span></div>
+                <div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+                    <div class="text-[9px] text-stone-400 mt-1">100%</div>
+                </div>
+                <div class="text-stone-600 font-mono text-[10px]">2.45s</div>
+                <div><button class="text-primary hover:text-primary-container font-bold text-[10px]">View</button></div>
+            </div>
+
+            <!-- Task 3 - Completed -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px;" class="task-row">
+                <div>
+                    <div class="font-bold text-on-surface">auth-service.py</div>
+                    <div class="text-[11px] text-stone-500 mt-1">Completed 15 minutes ago</div>
+                </div>
+                <div><span class="status-badge status-complete">Complete</span></div>
+                <div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+                    <div class="text-[9px] text-stone-400 mt-1">100%</div>
+                </div>
+                <div class="text-stone-600 font-mono text-[10px]">1.92s</div>
+                <div><button class="text-primary hover:text-primary-container font-bold text-[10px]">View</button></div>
+            </div>
+
+            <!-- Task 4 - Queued -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px;" class="task-row">
+                <div>
+                    <div class="font-bold text-on-surface">database-manager.java</div>
+                    <div class="text-[11px] text-stone-500 mt-1">Queued - Will start in ~2 seconds</div>
+                </div>
+                <div><span class="status-badge status-queued">Queued</span></div>
+                <div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    <div class="text-[9px] text-stone-400 mt-1">0%</div>
+                </div>
+                <div class="text-stone-600 font-mono text-[10px]">--</div>
+                <div><button class="text-stone-400 text-[10px] cursor-not-allowed">--</button></div>
+            </div>
+
+            <!-- Task 5 - Completed -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px;" class="task-row">
+                <div>
+                    <div class="font-bold text-on-surface">utils-helpers.cpp</div>
+                    <div class="text-[11px] text-stone-500 mt-1">Completed 1 hour ago</div>
+                </div>
+                <div><span class="status-badge status-complete">Complete</span></div>
+                <div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+                    <div class="text-[9px] text-stone-400 mt-1">100%</div>
+                </div>
+                <div class="text-stone-600 font-mono text-[10px]">3.12s</div>
+                <div><button class="text-primary hover:text-primary-container font-bold text-[10px]">View</button></div>
+            </div>
+
+            <!-- Task 6 - Completed -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px;" class="task-row">
+                <div>
+                    <div class="font-bold text-on-surface">payment-api.js</div>
+                    <div class="text-[11px] text-stone-500 mt-1">Completed 2 hours ago</div>
+                </div>
+                <div><span class="status-badge status-complete">Complete</span></div>
+                <div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+                    <div class="text-[9px] text-stone-400 mt-1">100%</div>
+                </div>
+                <div class="text-stone-600 font-mono text-[10px]">2.67s</div>
+                <div><button class="text-primary hover:text-primary-container font-bold text-[10px]">View</button></div>
+            </div>
+
+            <!-- Task 7 - Queued -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px;" class="task-row">
+                <div>
+                    <div class="font-bold text-on-surface">image-processor.py</div>
+                    <div class="text-[11px] text-stone-500 mt-1">Queued - Position 2 in queue</div>
+                </div>
+                <div><span class="status-badge status-queued">Queued</span></div>
+                <div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    <div class="text-[9px] text-stone-400 mt-1">0%</div>
+                </div>
+                <div class="text-stone-600 font-mono text-[10px]">--</div>
+                <div><button class="text-stone-400 text-[10px] cursor-not-allowed">--</button></div>
+            </div>
+
+            <!-- Task 8 - Completed -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px;" class="task-row">
+                <div>
+                    <div class="font-bold text-on-surface">config-loader.rb</div>
+                    <div class="text-[11px] text-stone-500 mt-1">Completed 3 hours ago</div>
+                </div>
+                <div><span class="status-badge status-complete">Complete</span></div>
+                <div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+                    <div class="text-[9px] text-stone-400 mt-1">100%</div>
+                </div>
+                <div class="text-stone-600 font-mono text-[10px]">1.53s</div>
+                <div><button class="text-primary hover:text-primary-container font-bold text-[10px]">View</button></div>
+            </div>
+
+            <!-- Task 9 - Queued -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px;" class="task-row">
+                <div>
+                    <div class="font-bold text-on-surface">router-middleware.go</div>
+                    <div class="text-[11px] text-stone-500 mt-1">Queued - Position 3 in queue</div>
+                </div>
+                <div><span class="status-badge status-queued">Queued</span></div>
+                <div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+                    <div class="text-[9px] text-stone-400 mt-1">0%</div>
+                </div>
+                <div class="text-stone-600 font-mono text-[10px]">--</div>
+                <div><button class="text-stone-400 text-[10px] cursor-not-allowed">--</button></div>
+            </div>
+
+            <!-- Task 10 - Completed -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px;" class="task-row">
+                <div>
+                    <div class="font-bold text-on-surface">cache-handler.rs</div>
+                    <div class="text-[11px] text-stone-500 mt-1">Completed 4 hours ago</div>
+                </div>
+                <div><span class="status-badge status-complete">Complete</span></div>
+                <div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+                    <div class="text-[9px] text-stone-400 mt-1">100%</div>
+                </div>
+                <div class="text-stone-600 font-mono text-[10px]">2.89s</div>
+                <div><button class="text-primary hover:text-primary-container font-bold text-[10px]">View</button></div>
+            </div>
+
+            <!-- Task 11 - Completed -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px;" class="task-row">
+                <div>
+                    <div class="font-bold text-on-surface">security-scan.cs</div>
+                    <div class="text-[11px] text-stone-500 mt-1">Completed 5 hours ago</div>
+                </div>
+                <div><span class="status-badge status-complete">Complete</span></div>
+                <div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+                    <div class="text-[9px] text-stone-400 mt-1">100%</div>
+                </div>
+                <div class="text-stone-600 font-mono text-[10px]">2.15s</div>
+                <div><button class="text-primary hover:text-primary-container font-bold text-[10px]">View</button></div>
+            </div>
+
+            <!-- Task 12 - Completed -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 16px;" class="task-row" style="border-bottom: none;">
+                <div>
+                    <div class="font-bold text-on-surface">main-entry-point.kt</div>
+                    <div class="text-[11px] text-stone-500 mt-1">Completed 6 hours ago</div>
+                </div>
+                <div><span class="status-badge status-complete">Complete</span></div>
+                <div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+                    <div class="text-[9px] text-stone-400 mt-1">100%</div>
+                </div>
+                <div class="text-stone-600 font-mono text-[10px]">3.24s</div>
+                <div><button class="text-primary hover:text-primary-container font-bold text-[10px]">View</button></div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-6 flex items-center justify-between text-[10px] text-stone-600">
+            <div>Showing 1-12 of 12 tasks</div>
+            <div class="flex gap-2">
+                <button class="px-3 py-1 border border-stone-200 hover:bg-stone-50">← Prev</button>
+                <button class="px-3 py-1 bg-primary-container text-on-primary-fixed">1</button>
+                <button class="px-3 py-1 border border-stone-200 hover:bg-stone-50">Next →</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+function goToPage(page) {
+    window.location.href = page;
+}
+
+function filterTasks(filter) {
+    console.log('Filtering tasks by:', filter);
+    // In production, this would dynamically filter the task list
+}
+</script>
+
+</body>
+</html>

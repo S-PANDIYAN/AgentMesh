@@ -1,0 +1,73 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./public/**/*.html",
+    "./src/**/*.js",
+  ],
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "outline-variant": "#d1c6ab",
+        "surface-tint": "#735c00",
+        "on-tertiary-fixed": "#1b1b25",
+        "inverse-surface": "#353028",
+        "surface-container": "#f7ece1",
+        "background": "#fff8f3",
+        "on-primary-container": "#6c5700",
+        "secondary-container": "#e9ded3",
+        "surface-container-high": "#f1e6db",
+        "on-primary-fixed-variant": "#574500",
+        "primary-fixed-dim": "#eec200",
+        "on-secondary-fixed": "#201b14",
+        "tertiary-fixed": "#e3e1f0",
+        "inverse-primary": "#eec200",
+        "tertiary": "#5e5d6a",
+        "on-error": "#ffffff",
+        "on-primary-fixed": "#231b00",
+        "tertiary-fixed-dim": "#c7c5d3",
+        "surface-variant": "#ebe1d6",
+        "error-container": "#ffdad6",
+        "on-background": "#201b14",
+        "error": "#ba1a1a",
+        "secondary-fixed-dim": "#cfc5ba",
+        "surface-container-lowest": "#ffffff",
+        "on-tertiary-fixed-variant": "#464652",
+        "outline": "#7f7660",
+        "surface-container-low": "#fdf2e6",
+        "primary-fixed": "#ffe083",
+        "on-secondary-container": "#696159",
+        "surface": "#fff8f3",
+        "tertiary-container": "#d2cfde",
+        "secondary-fixed": "#ebe1d6",
+        "secondary": "#645d55",
+        "on-secondary": "#ffffff",
+        "on-surface-variant": "#4d4632",
+        "on-tertiary-container": "#595864",
+        "inverse-on-surface": "#faefe4",
+        "on-primary": "#ffffff",
+        "surface-container-highest": "#ebe1d6",
+        "on-error-container": "#93000a",
+        "surface-bright": "#fff8f3",
+        "surface-dim": "#e3d8cd",
+        "on-surface": "#201b14",
+        "on-tertiary": "#ffffff",
+        "on-secondary-fixed-variant": "#4c463e",
+        "primary": "#735c00",
+        "primary-container": "#facc15"
+      },
+      borderRadius: {
+        DEFAULT: "0px",
+        lg: "0px",
+        xl: "0px",
+        full: "9999px"
+      },
+      fontFamily: {
+        headline: ["Space Grotesk"],
+        body: ["Inter"],
+        label: ["Space Grotesk"]
+      }
+    },
+  },
+  plugins: [],
+}

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AgentMesh Intelligence Hub - Security Agent Analysis</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#d1c6ab",
+                        "surface-tint": "#735c00",
+                        "on-tertiary-fixed": "#1b1b25",
+                        "inverse-surface": "#353028",
+                        "surface-container": "#f7ece1",
+                        "background": "#fff8f3",
+                        "on-primary-container": "#6c5700",
+                        "secondary-container": "#e9ded3",
+                        "surface-container-high": "#f1e6db",
+                        "on-primary-fixed-variant": "#574500",
+                        "primary-fixed-dim": "#eec200",
+                        "on-secondary-fixed": "#201b14",
+                        "tertiary-fixed": "#e3e1f0",
+                        "inverse-primary": "#eec200",
+                        "tertiary": "#5e5d6a",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed": "#231b00",
+                        "tertiary-fixed-dim": "#c7c5d3",
+                        "surface-variant": "#ebe1d6",
+                        "error-container": "#ffdad6",
+                        "on-background": "#201b14",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#cfc5ba",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#464652",
+                        "outline": "#7f7660",
+                        "surface-container-low": "#fdf2e6",
+                        "primary-fixed": "#ffe083",
+                        "on-secondary-container": "#696159",
+                        "surface": "#fff8f3",
+                        "tertiary-container": "#d2cfde",
+                        "secondary-fixed": "#ebe1d6",
+                        "secondary": "#645d55",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#4d4632",
+                        "on-tertiary-container": "#595864",
+                        "inverse-on-surface": "#faefe4",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#ebe1d6",
+                        "on-error-container": "#93000a",
+                        "surface-bright": "#fff8f3",
+                        "surface-dim": "#e3d8cd",
+                        "on-surface": "#201b14",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#4c463e",
+                        "primary": "#735c00",
+                        "primary-container": "#facc15"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-space { font-family: 'Space Grotesk', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-primary-container selection:text-on-primary-fixed">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#fff8f3]/80 backdrop-blur-2xl flex justify-between items-center px-8 h-16 w-full shadow-[0_20px_40px_rgba(32,27,20,0.06)]">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black text-[#231b00] italic font-headline uppercase tracking-tight">AgentMesh Intelligence Hub</span>
+<div class="hidden md:flex space-x-6">
+<a class="text-gray-500 hover:text-[#735c00] font-label text-sm font-bold uppercase tracking-tight transition-transform duration-200 hover:translate-x-1" href="#">Cluster Status</a>
+<a class="text-gray-500 hover:text-[#735c00] font-label text-sm font-bold uppercase tracking-tight transition-transform duration-200 hover:translate-x-1" href="#">Models</a>
+<a class="text-gray-500 hover:text-[#735c00] font-label text-sm font-bold uppercase tracking-tight transition-transform duration-200 hover:translate-x-1" href="#">Audit Log</a>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all scale-95 active:scale-90">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all scale-95 active:scale-90">settings</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all scale-95 active:scale-90">terminal</button>
+<div class="w-8 h-8 bg-surface-container-highest border border-outline-variant/10">
+<img alt="Administrator Avatar" class="w-full h-full object-cover" data-alt="abstract close-up of computer circuitry and glowing data traces in a high-tech dark environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHVstAJr8qqWIQli_Bvl224An8tWLck5XwCMulALWSIo2TTv2W5K6Xdk-QPQihhlShZNxVXnhY8c2ikoProxv8r-38_eukGeYKu3p73Orl0aYNYA6UDRfC19d0NhDjtr8mQGosTb-o2cTo_BM8fs4UO0Bjcg21hp2WyWvxZ-I1gvlDBJX9gWMpEriK93rWb4mTYnlW4QF92LN-Sw1iruaC6hEArqXzSbFE0CXltnq-ZDjl5z1OWR7d3lKEbupwRrlIQbiCDjS5NUYG"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-full flex flex-col bg-[#f7ece1] w-64 z-40 hidden md:flex">
+<div class="p-6 bg-surface-container-highest/50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-fixed" style="font-variation-settings: 'FILL' 1;">hub</span>
+</div>
+<div>
+<div class="text-[10px] font-black tracking-[0.2em] text-primary">CLUSTER_01</div>
+<div class="text-[9px] font-medium text-on-surface-variant">V12_HYPER_ENGINE</div>
+</div>
+</div>
+</div>
+<div class="flex-1 py-4">
+<div class="px-6 mb-4 text-[10px] font-bold text-on-surface-variant/50 tracking-widest uppercase">Navigation</div>
+<nav class="space-y-1">
+<a class="flex items-center px-6 py-3 gap-4 bg-[#FACC15] text-[#231b00] font-black transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+<span class="font-label text-xs tracking-widest uppercase">Orchestrator</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-4 text-gray-400 opacity-70 hover:bg-[#ebe1d6] transition-all translate-x-1 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">group_work</span>
+<span class="font-label text-xs tracking-widest uppercase">Autonomous Swarm</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-4 text-gray-400 opacity-70 hover:bg-[#ebe1d6] transition-all translate-x-1 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">settings_input_antenna</span>
+<span class="font-label text-xs tracking-widest uppercase">Edge Nodes</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-4 text-gray-400 opacity-70 hover:bg-[#ebe1d6] transition-all translate-x-1 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">database</span>
+<span class="font-label text-xs tracking-widest uppercase">Memory Grid</span>
+</a>
+<a class="flex items-center px-6 py-3 gap-4 text-gray-400 opacity-70 hover:bg-[#ebe1d6] transition-all translate-x-1 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">shield</span>
+<span class="font-label text-xs tracking-widest uppercase">Security Vault</span>
+</a>
+</nav>
+</div>
+<div class="p-6">
+<button class="w-full py-4 bg-primary text-on-primary font-label text-xs font-black tracking-widest uppercase transition-all hover:bg-primary-fixed-dim active:scale-95">
+                DEPLOY NEW AGENT
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="md:ml-64 pt-16 pb-12 px-8 min-h-screen">
+<div class="max-w-7xl mx-auto py-8">
+<!-- Header / Hero Section (Asymmetric) -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12 items-start">
+<div class="lg:col-span-7">
+<div class="inline-flex items-center gap-2 mb-4 bg-primary-container/10 px-3 py-1">
+<span class="w-2 h-2 bg-primary-container animate-pulse"></span>
+<span class="font-label text-[10px] font-black tracking-widest text-primary uppercase">Active Intelligence Stream</span>
+</div>
+<h1 class="text-6xl md:text-8xl font-headline font-black uppercase tracking-tighter leading-none mb-6">
+                        Security<br/><span class="text-primary">Agent</span>
+</h1>
+<p class="text-on-surface-variant max-w-xl leading-relaxed border-l-4 border-primary-container pl-6 py-2">
+                        Deep-dive analysis of decentralized security clusters. This agent utilizes autonomous heuristic modeling to identify high-velocity threat vectors across the edge infrastructure.
+                    </p>
+</div>
+<div class="lg:col-span-5 grid grid-cols-2 gap-4">
+<div class="bg-surface-container p-6 flex flex-col justify-between h-48 border-b-4 border-primary-container">
+<div class="text-primary font-label text-[10px] font-black tracking-widest uppercase">Overall Confidence</div>
+<div class="text-6xl font-headline font-black italic">94<span class="text-2xl opacity-50">%</span></div>
+</div>
+<div class="bg-inverse-surface p-6 flex flex-col justify-between h-48">
+<div class="text-primary-container font-label text-[10px] font-black tracking-widest uppercase">Status</div>
+<div class="flex flex-col">
+<span class="text-white text-2xl font-headline font-bold leading-tight">ACTIVE SCAN</span>
+<span class="text-white/40 text-[10px] font-mono mt-2">PID: 0x882_SYS</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Findings & Reasoning Grid (Bento Style) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Findings List -->
+<div class="lg:col-span-2 space-y-8">
+<div class="flex items-center justify-between">
+<h2 class="text-2xl font-headline font-black uppercase tracking-tight">Vulnerability Log</h2>
+<div class="h-[2px] flex-1 mx-6 bg-surface-container"></div>
+<span class="font-label text-xs font-bold text-on-surface-variant/60 uppercase">4 Critical Issues</span>
+</div>
+<div class="space-y-4">
+<!-- Finding Item -->
+<div class="group bg-surface-container-low hover:bg-surface-container-highest transition-all p-6 relative overflow-hidden">
+<div class="absolute right-0 top-0 w-2 h-full bg-error"></div>
+<div class="flex justify-between items-start mb-4">
+<div>
+<div class="font-label text-[10px] font-black text-error uppercase mb-1">Critical Priority</div>
+<h3 class="text-xl font-headline font-bold uppercase tracking-tight">SQL Injection Vector</h3>
+</div>
+<span class="text-[10px] font-mono text-on-surface-variant bg-surface-container px-2 py-1">CVE-2024-0922</span>
+</div>
+<p class="text-sm text-on-surface-variant mb-6 leading-relaxed max-w-2xl">
+                                Unsanitized input detected in the cluster configuration metadata service. Potential for full database exfiltration via edge node proxy bypass.
+                            </p>
+<div class="flex gap-4">
+<div class="flex-1 h-1 bg-surface-variant">
+<div class="bg-error h-full" style="width: 88%"></div>
+</div>
+<span class="font-label text-[10px] font-black text-on-surface">RISK: 8.8</span>
+</div>
+</div>
+<!-- Finding Item -->
+<div class="group bg-surface-container-low hover:bg-surface-container-highest transition-all p-6 relative overflow-hidden">
+<div class="absolute right-0 top-0 w-2 h-full bg-primary-container"></div>
+<div class="flex justify-between items-start mb-4">
+<div>
+<div class="font-label text-[10px] font-black text-primary uppercase mb-1">High Priority</div>
+<h3 class="text-xl font-headline font-bold uppercase tracking-tight">Auth Bypass in Relay Nodes</h3>
+</div>
+<span class="text-[10px] font-mono text-on-surface-variant bg-surface-container px-2 py-1">CVE-2024-1104</span>
+</div>
+<p class="text-sm text-on-surface-variant mb-6 leading-relaxed max-w-2xl">
+                                Session tokens are not correctly validated when passed through the latency-optimization layer.
+                            </p>
+<div class="flex gap-4">
+<div class="flex-1 h-1 bg-surface-variant">
+<div class="bg-primary-container h-full" style="width: 72%"></div>
+</div>
+<span class="font-label text-[10px] font-black text-on-surface">RISK: 7.2</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Reasoning Graph & Memory Insights -->
+<div class="space-y-8">
+<!-- Reasoning Graph Component -->
+<div class="bg-inverse-surface text-white p-8 h-96 flex flex-col">
+<div class="flex justify-between items-start mb-8">
+<h2 class="text-xl font-headline font-black uppercase tracking-tight leading-none">Reasoning<br/>Graph</h2>
+<span class="material-symbols-outlined text-primary-container">account_tree</span>
+</div>
+<div class="flex-1 relative border-l border-b border-white/10 flex items-center justify-center overflow-hidden">
+<!-- Mock Visualization -->
+<div class="absolute inset-0 opacity-20">
+<img class="w-full h-full object-cover" data-alt="abstract complex network of glowing lines and data points connecting in a 3d digital space on black background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCx88ACZ-3pjofu4uGmCBzjoNL6HdtMV80p_QfPj6V79yoWCafawrOMmbszc3mATMw9JNEXnUc_l-Bh8XGkYz79GIxDEaHLTlyR8B2kQ2KubSFWqhWghekXW5hJr2tD-sEkaGfH9vP3rWMcuQvDIgcND98epGw0vO5Iz4T3oXlAPuse9kXVN4BUhYvE4mDuQvJfIIKy_fvPXDShbL2m_9GHyRlrcKFUVwlqM9_shl6frbcgvkCUq13uQIx0TOGvodv_s-9C7g4DGZhP"/>
+</div>
+<div class="relative z-10 w-full p-4 space-y-4">
+<div class="bg-white/5 backdrop-blur-md p-3 border-l-2 border-primary-container">
+<div class="text-[9px] font-black uppercase tracking-widest text-primary-container mb-1">Inference A</div>
+<div class="text-[10px] leading-tight">Pattern match: "User_Login_01" -&gt; "External_Query"</div>
+</div>
+<div class="bg-white/5 backdrop-blur-md p-3 border-l-2 border-white/20 ml-6">
+<div class="text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Hypothesis</div>
+<div class="text-[10px] leading-tight">Logic flaw in token generation detected.</div>
+</div>
+<div class="bg-primary-container p-3 border-l-2 border-white ml-12">
+<div class="text-[9px] font-black uppercase tracking-widest text-on-primary-fixed mb-1">Conclusion</div>
+<div class="text-[10px] leading-tight text-on-primary-fixed font-bold">Vulnerability Confirmed: SQLi</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Shared Memory Insights -->
+<div class="bg-surface-container p-8">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">psychology_alt</span>
+<h2 class="text-xl font-headline font-black uppercase tracking-tight">Memory Grid</h2>
+</div>
+<div class="space-y-6">
+<div>
+<div class="text-[10px] font-black uppercase tracking-widest text-primary mb-2">Learned Insight</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                                    Previous clusters with "Hyper-Engine" architecture showed similar resonance in the Edge layers. Adjusting heuristic sensitivity for v12 compatibility.
+                                </p>
+</div>
+<div class="h-[1px] bg-outline-variant/20"></div>
+<div>
+<div class="text-[10px] font-black uppercase tracking-widest text-primary mb-2">Cross-Agent Sync</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                                    Model "Orchestrator" suggested correlating logs with Diagnostic PID 0x011. Correlation factor: High.
+                                </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Terminal Style) -->
+<footer class="fixed bottom-0 w-full h-12 z-50 bg-[#231b00] flex justify-start items-center px-6 space-x-12 shadow-[0_-10px_30px_rgba(250,204,21,0.1)]">
+<div class="flex items-center space-x-12">
+<button class="flex items-center gap-2 group text-[#FACC15] bg-[#FACC15]/10 px-3 py-1">
+<span class="material-symbols-outlined text-sm">list_alt</span>
+<span class="font-mono text-[10px] uppercase tracking-widest">Live Logs</span>
+</button>
+<button class="flex items-center gap-2 group text-white/40 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-sm">query_stats</span>
+<span class="font-mono text-[10px] uppercase tracking-widest">Metrics</span>
+</button>
+<button class="flex items-center gap-2 group text-white/40 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-sm">biotech</span>
+<span class="font-mono text-[10px] uppercase tracking-widest">Diagnostics</span>
+</button>
+<button class="flex items-center gap-2 group text-white/40 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-sm">keyboard_arrow_right</span>
+<span class="font-mono text-[10px] uppercase tracking-widest">Terminal</span>
+</button>
+</div>
+<div class="flex-1 text-right">
+<span class="font-mono text-[9px] text-primary/50 tracking-tighter uppercase">system_uptime: 142:12:09 // agent_load: 0.142s</span>
+</div>
+</footer>
+</body></html>

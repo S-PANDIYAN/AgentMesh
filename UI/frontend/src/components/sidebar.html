@@ -1,0 +1,67 @@
+<!-- Sidebar Component -->
+<aside id="sidebar" class="fixed left-0 top-16 h-full w-64 bg-[#f7ece1] dark:bg-[#1a1a1a] flex flex-col z-40">
+  <div class="p-6 border-b border-outline-variant/10">
+    <div class="flex items-center gap-3 mb-2">
+      <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">hub</span>
+      <span class="font-headline text-xs font-bold tracking-widest text-on-surface">CLUSTER_01</span>
+    </div>
+    <span class="font-headline text-[10px] text-primary opacity-80">V12_HYPER_ENGINE</span>
+  </div>
+  <nav class="flex-1 py-4">
+    <div class="px-3 mb-4">
+      <button id="deploy-agent-btn" class="w-full bg-primary-container text-[#231b00] font-black font-headline text-xs tracking-widest py-3 hover:translate-x-1 transition-all duration-150 cursor-pointer">
+        DEPLOY NEW AGENT
+      </button>
+    </div>
+    <ul class="space-y-1">
+      <li>
+        <a class="flex items-center gap-4 px-6 py-3 text-gray-400 opacity-70 font-headline text-xs font-bold tracking-widest hover:bg-[#ebe1d6] dark:hover:bg-[#2d2d2d] transition-all cursor-pointer" href="#" data-page="orchestrator">
+          <span class="material-symbols-outlined">hub</span> ORCHESTRATOR
+        </a>
+      </li>
+      <li>
+        <a class="flex items-center gap-4 px-6 py-3 bg-[#FACC15] text-[#231b00] font-black font-headline text-xs tracking-widest translate-x-1 duration-150 cursor-pointer active-link" href="#" data-page="swarm">
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group_work</span> AUTONOMOUS SWARM
+        </a>
+      </li>
+      <li>
+        <a class="flex items-center gap-4 px-6 py-3 text-gray-400 opacity-70 font-headline text-xs font-bold tracking-widest hover:bg-[#ebe1d6] dark:hover:bg-[#2d2d2d] transition-all cursor-pointer" href="#" data-page="edge">
+          <span class="material-symbols-outlined">settings_input_antenna</span> EDGE NODES
+        </a>
+      </li>
+      <li>
+        <a class="flex items-center gap-4 px-6 py-3 text-gray-400 opacity-70 font-headline text-xs font-bold tracking-widest hover:bg-[#ebe1d6] dark:hover:bg-[#2d2d2d] transition-all cursor-pointer" href="#" data-page="memory">
+          <span class="material-symbols-outlined">database</span> MEMORY GRID
+        </a>
+      </li>
+      <li>
+        <a class="flex items-center gap-4 px-6 py-3 text-gray-400 opacity-70 font-headline text-xs font-bold tracking-widest hover:bg-[#ebe1d6] dark:hover:bg-[#2d2d2d] transition-all cursor-pointer" href="#" data-page="security">
+          <span class="material-symbols-outlined">shield</span> SECURITY VAULT
+        </a>
+      </li>
+    </ul>
+  </nav>
+</aside>
+
+<script>
+// Sidebar navigation
+document.querySelectorAll('[data-page]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const page = e.currentTarget.dataset.page;
+    console.log('Navigating to:', page);
+    // Update active link
+    document.querySelectorAll('[data-page]').forEach(l => {
+      l.parentElement.classList.remove('bg-[#FACC15]', 'text-[#231b00]', 'font-black');
+      l.classList.remove('bg-[#FACC15]', 'text-[#231b00]', 'font-black');
+    });
+    e.currentTarget.parentElement.classList.add('bg-[#FACC15]', 'text-[#231b00]', 'font-black');
+    e.currentTarget.classList.add('bg-[#FACC15]', 'text-[#231b00]', 'font-black');
+  });
+});
+
+// Deploy agent button
+document.getElementById('deploy-agent-btn')?.addEventListener('click', () => {
+  Utils?.showNotification('Deploy agent dialog opened', 'info');
+});
+</script>

@@ -1,0 +1,17 @@
+{
+  "name": "agentmesh-ui",
+  "version": "1.0.0",
+  "description": "Professional Web UI for AgentMesh - Multi-Agent Code Review Platform",
+  "main": "index.js",
+  "scripts": {
+    "dev": "live-server public",
+    "build": "tailwindcss -i src/styles/input.css -o public/styles.css",
+    "watch": "tailwindcss -i src/styles/input.css -o public/styles.css --watch"
+  },
+  "dependencies": {
+    "tailwindcss": "^3.3.0"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

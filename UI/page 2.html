@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AgentMesh | Hot-Reload State</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#645d55",
+                        "on-tertiary-container": "#595864",
+                        "primary-fixed-dim": "#eec200",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#cfc5ba",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#c7c5d3",
+                        "on-tertiary-fixed": "#1b1b25",
+                        "on-surface-variant": "#4d4632",
+                        "on-secondary-fixed": "#201b14",
+                        "surface-variant": "#ebe1d6",
+                        "on-tertiary": "#ffffff",
+                        "outline-variant": "#d1c6ab",
+                        "on-surface": "#201b14",
+                        "inverse-surface": "#353028",
+                        "surface-container-highest": "#ebe1d6",
+                        "secondary-container": "#e9ded3",
+                        "on-background": "#201b14",
+                        "secondary-fixed": "#ebe1d6",
+                        "tertiary-container": "#d2cfde",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#6c5700",
+                        "tertiary-fixed": "#e3e1f0",
+                        "surface-dim": "#e3d8cd",
+                        "surface-tint": "#735c00",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#fff8f3",
+                        "outline": "#7f7660",
+                        "on-secondary-container": "#696159",
+                        "surface-container": "#f7ece1",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#464652",
+                        "on-primary-fixed-variant": "#574500",
+                        "surface": "#fff8f3",
+                        "primary-fixed": "#ffe083",
+                        "inverse-on-surface": "#faefe4",
+                        "on-secondary-fixed-variant": "#4c463e",
+                        "inverse-primary": "#eec200",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#f1e6db",
+                        "primary": "#735c00",
+                        "background": "#fff8f3",
+                        "surface-container-low": "#fdf2e6",
+                        "primary-container": "#facc15",
+                        "tertiary": "#5e5d6a",
+                        "on-primary-fixed": "#231b00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .recalibrate-spin {
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .amber-glitch-overlay {
+            background: linear-gradient(180deg, rgba(250, 204, 21, 0.03) 0%, rgba(250, 204, 21, 0.08) 50%, rgba(250, 204, 21, 0.03) 100%);
+            pointer-events: none;
+        }
+        .grid-bg {
+            background-image: radial-gradient(circle, #facc15 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .node-pulse {
+            animation: node-pulse 3s ease-in-out infinite;
+        }
+        @keyframes node-pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-container selection:text-on-primary-container overflow-hidden">
+<!-- Recalibrating Overlay -->
+<div class="fixed inset-0 z-[100] amber-glitch-overlay mix-blend-multiply"></div>
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-stone-950/80 backdrop-blur-xl shadow-[0_20px_40px_rgba(32,27,20,0.06)] flex justify-between items-center px-8 h-16 w-full">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black italic text-stone-900 dark:text-white uppercase font-headline">AgentMesh</span>
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-stone-500 dark:text-stone-400 font-headline uppercase tracking-tight text-sm hover:bg-yellow-400 hover:text-stone-900 transition-all duration-150 active:translate-x-1" href="#">Memory Snapshot</a>
+<a class="text-stone-500 dark:text-stone-400 font-headline uppercase tracking-tight text-sm hover:bg-yellow-400 hover:text-stone-900 transition-all duration-150 active:translate-x-1" href="#">PR Report</a>
+</nav>
+</div>
+<!-- Status Badge Center -->
+<div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 bg-primary-container/10 px-4 py-1.5">
+<span class="text-[10px] font-black font-headline text-primary-container recalibrate-spin material-symbols-outlined" data-icon="sync">sync</span>
+<span class="text-primary-container font-headline font-bold text-xs uppercase tracking-[0.2em]">● RECALIBRATING</span>
+</div>
+<div class="flex items-center gap-4">
+<!-- RECALIBRATING Button -->
+<button class="bg-primary-container text-on-primary-fixed font-headline font-black text-xs px-6 py-2 flex items-center gap-3 transition-all active:translate-y-0.5">
+<span class="material-symbols-outlined text-sm recalibrate-spin" data-icon="autorenew">autorenew</span>
+                RECALIBRATING...
+            </button>
+<div class="flex items-center gap-2 ml-4">
+<button class="p-2 text-stone-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+</button>
+<button class="p-2 text-stone-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-16 bg-stone-50 dark:bg-stone-900 flex flex-col py-6 gap-2 tonal-layering bg-stone-100 dark:bg-stone-950">
+<div class="px-6 mb-8">
+<div class="font-headline text-[10px] font-bold uppercase tracking-widest text-primary">ORCHESTRATOR</div>
+<div class="font-headline text-[8px] font-medium text-stone-400 tracking-widest">V12 HYBRID ENGINE</div>
+</div>
+<nav class="flex flex-col gap-1 px-4">
+<a class="flex items-center gap-4 px-4 py-3 text-stone-600 dark:text-stone-400 font-headline text-xs font-bold uppercase tracking-widest hover:bg-stone-200 dark:hover:bg-stone-800 hover:translate-x-2 transition-transform" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="shield">shield</span> Security
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 bg-yellow-400 text-stone-950 font-black font-headline text-xs uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="verified">verified</span> Quality
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-stone-600 dark:text-stone-400 font-headline text-xs font-bold uppercase tracking-widest hover:bg-stone-200 dark:hover:bg-stone-800 hover:translate-x-2 transition-transform" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="speed">speed</span> Performance
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-stone-600 dark:text-stone-400 font-headline text-xs font-bold uppercase tracking-widest hover:bg-stone-200 dark:hover:bg-stone-800 hover:translate-x-2 transition-transform" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="description">description</span> Documentation
+            </a>
+<a class="flex items-center gap-4 px-4 py-3 text-stone-600 dark:text-stone-400 font-headline text-xs font-bold uppercase tracking-widest hover:bg-stone-200 dark:hover:bg-stone-800 hover:translate-x-2 transition-transform" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="hub">hub</span> Coordinator
+            </a>
+</nav>
+<div class="mt-auto px-4 mb-20">
+<button class="w-full bg-stone-900 text-white font-headline font-bold text-[10px] tracking-widest py-4 hover:bg-primary-container hover:text-black transition-colors">
+                DEPLOY AGENT
+            </button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-64 mt-16 p-8 h-[calc(100vh-64px)] overflow-y-auto bg-surface">
+<div class="max-w-7xl mx-auto space-y-8">
+<!-- Hero Intelligence Section -->
+<section class="grid grid-cols-12 gap-0 relative group">
+<div class="col-span-12 lg:col-span-7 bg-surface-container p-12 flex flex-col justify-between min-h-[400px]">
+<div class="space-y-4">
+<span class="font-headline text-primary font-bold tracking-[0.3em] text-xs uppercase">System Critical</span>
+<h1 class="font-headline text-6xl font-black uppercase leading-[0.9] tracking-tighter">
+                            Active Node <br/> <span class="text-primary-container bg-stone-950 px-2">Recalibration</span>
+</h1>
+</div>
+<div class="flex items-end justify-between">
+<div class="space-y-1">
+<div class="text-stone-400 font-headline text-[10px] uppercase font-bold">Latency Delta</div>
+<div class="text-3xl font-headline font-black">+42.0ms</div>
+</div>
+<div class="text-right">
+<div class="text-stone-400 font-headline text-[10px] uppercase font-bold">Status</div>
+<div class="text-primary-container font-headline font-bold">OVERRIDE ACTIVE</div>
+</div>
+</div>
+</div>
+<!-- Neural Network / Code-Flow Visualization Replace -->
+<div class="col-span-12 lg:col-span-5 relative bg-stone-950 overflow-hidden flex items-center justify-center p-8">
+<div class="absolute inset-0 grid-bg opacity-10"></div>
+<svg class="w-full h-full max-h-[300px] text-primary-container/40" viewbox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+<!-- Connecting Lines -->
+<path class="stroke-current stroke-[1] fill-none" d="M50,150 L150,50 L250,50 L350,150 L250,250 L150,250 Z"></path>
+<path class="stroke-current stroke-[1] fill-none" d="M150,50 L150,250 M250,50 L250,250 M50,150 L350,150"></path>
+<!-- Neural Nodes -->
+<circle class="fill-primary-container node-pulse" cx="50" cy="150" r="4"></circle>
+<circle class="fill-primary-container" cx="150" cy="50" r="4" style="animation-delay: 0.5s"></circle>
+<circle class="fill-primary-container node-pulse" cx="250" cy="50" r="4" style="animation-delay: 1s"></circle>
+<circle class="fill-primary-container" cx="350" cy="150" r="4" style="animation-delay: 1.5s"></circle>
+<circle class="fill-primary-container node-pulse" cx="250" cy="250" r="4" style="animation-delay: 2s"></circle>
+<circle class="fill-primary-container" cx="150" cy="250" r="4" style="animation-delay: 2.5s"></circle>
+<!-- Center Core -->
+<rect class="stroke-primary-container fill-stone-950 stroke-2" height="60" width="60" x="170" y="120"></rect>
+<text class="fill-primary-container font-mono text-[8px] font-bold" x="178" y="155">CORE_01</text>
+</svg>
+<div class="absolute bottom-4 left-4 font-mono text-[8px] text-primary-container/60">
+                    INTEL_FLOW: SYNC_ARRAY[2.4.0]<br/>
+                    PROCESSOR_THREAD: #0x00FF81
+                </div>
+<div class="absolute inset-0 bg-primary-container/5 animate-pulse"></div>
+</div>
+</section>
+<!-- Technical Spec Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Spec Card 1 -->
+<div class="bg-surface-container-low p-8 border-l-4 border-primary-container">
+<div class="font-headline text-[10px] text-primary uppercase font-bold tracking-widest mb-4">Core Frequency</div>
+<div class="text-4xl font-headline font-black tracking-tighter">5.82<span class="text-lg text-stone-400">GHZ</span></div>
+<div class="mt-4 h-1 bg-surface-variant w-full overflow-hidden">
+<div class="h-full bg-primary-container w-3/4 recalibrate-spin origin-left"></div>
+</div>
+</div>
+<!-- Spec Card 2 -->
+<div class="bg-surface-container p-8">
+<div class="font-headline text-[10px] text-primary uppercase font-bold tracking-widest mb-4">Thread Integrity</div>
+<div class="text-4xl font-headline font-black tracking-tighter">99.1<span class="text-lg text-stone-400">%</span></div>
+<div class="mt-4 h-1 bg-surface-variant w-full">
+<div class="h-full bg-primary-container w-[99%]"></div>
+</div>
+</div>
+<!-- Spec Card 3 -->
+<div class="bg-surface-container-low p-8 border-l-4 border-stone-900">
+<div class="font-headline text-[10px] text-primary uppercase font-bold tracking-widest mb-4">Cache Buffer</div>
+<div class="text-4xl font-headline font-black tracking-tighter">128<span class="text-lg text-stone-400">MB</span></div>
+<div class="mt-4 h-1 bg-surface-variant w-full">
+<div class="h-full bg-stone-900 w-1/2"></div>
+</div>
+</div>
+<!-- Spec Card 4 -->
+<div class="bg-surface-container p-8">
+<div class="font-headline text-[10px] text-primary uppercase font-bold tracking-widest mb-4">Neural Load</div>
+<div class="text-4xl font-headline font-black tracking-tighter">12.4<span class="text-lg text-stone-400">TF</span></div>
+<div class="mt-4 h-1 bg-surface-variant w-full">
+<div class="h-full bg-primary-container w-1/4"></div>
+</div>
+</div>
+</div>
+<!-- Detailed Log View (Bento Card) -->
+<div class="grid grid-cols-12 gap-4">
+<div class="col-span-12 lg:col-span-8 bg-stone-950 text-stone-400 p-8 font-mono text-[11px] leading-relaxed relative">
+<div class="absolute top-4 right-8 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+<span class="font-headline text-[10px] font-bold text-white tracking-widest">LIVE_CAPTURE</span>
+</div>
+<div class="text-primary-container mb-4 font-bold">[SYSTEM_INITIALIZING_HOT_RELOAD]</div>
+<div>&gt; Mapping memory addresses 0x004F2... DONE</div>
+<div>&gt; Recalibrating agent mesh connectivity... <span class="text-primary-container">IN_PROGRESS</span></div>
+<div>&gt; Flushing obsolete state cache... SUCCESS</div>
+<div>&gt; Reloading 14 primary agents... <span class="text-primary-container">4/14</span></div>
+<div class="mt-4 flex gap-4">
+<span class="bg-stone-800 text-stone-500 px-2 py-0.5">AGENT_01: SYNCED</span>
+<span class="bg-stone-800 text-stone-500 px-2 py-0.5">AGENT_02: SYNCED</span>
+<span class="bg-stone-800 text-primary-container px-2 py-0.5 font-bold">AGENT_03: RECALIBRATING...</span>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-4 bg-surface-container-high p-8 flex flex-col justify-between">
+<div class="font-headline text-[10px] text-primary uppercase font-bold tracking-widest">Telemetry Visualizer</div>
+<div class="h-48 flex items-end gap-1 mt-6">
+<div class="flex-1 bg-primary-container/20 h-1/2"></div>
+<div class="flex-1 bg-primary-container/40 h-2/3"></div>
+<div class="flex-1 bg-primary-container/60 h-3/4"></div>
+<div class="flex-1 bg-primary-container h-full"></div>
+<div class="flex-1 bg-primary-container/80 h-4/5"></div>
+<div class="flex-1 bg-primary-container/40 h-1/2"></div>
+<div class="flex-1 bg-primary-container/20 h-1/4"></div>
+</div>
+<p class="text-xs font-medium text-stone-500 mt-6 leading-relaxed">
+                        Visualizing real-time agent synchronization pulses. The spike at 140ms indicates peak recalibration pressure.
+                    </p>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<footer class="fixed bottom-0 w-full z-50 h-12 bg-stone-900 dark:bg-black border-t-2 border-yellow-400/20 flex justify-start items-center px-6 gap-8 w-full font-headline font-mono text-[10px]">
+<div class="text-yellow-400 flex items-center gap-2 px-4 hover:text-white transition-all scale-95 duration-100">
+<span class="material-symbols-outlined text-sm" data-icon="terminal">terminal</span> LIVE_LOGS
+        </div>
+<div class="text-stone-500 flex items-center gap-2 px-4 hover:text-white transition-all scale-95 duration-100">
+<span class="material-symbols-outlined text-sm" data-icon="query_stats">query_stats</span> METRICS
+        </div>
+<div class="text-stone-500 flex items-center gap-2 px-4 hover:text-white transition-all scale-95 duration-100">
+<span class="material-symbols-outlined text-sm" data-icon="router">router</span> TRAFFIC
+        </div>
+<div class="text-stone-500 flex items-center gap-2 px-4 hover:text-white transition-all scale-95 duration-100">
+<span class="material-symbols-outlined text-sm" data-icon="error">error</span> ERROR_POOL
+        </div>
+<div class="ml-auto text-primary-container font-black tracking-widest animate-pulse">
+            HOT_RELOAD_ACTIVE_SESSION_ID: 9812-AX
+        </div>
+</footer>
+</body></html>

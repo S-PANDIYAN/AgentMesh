@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AgentMesh | Dev-Centric Orchestrator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#ffffff",
+                    "secondary": "#645d55",
+                    "on-tertiary-container": "#595864",
+                    "primary-fixed-dim": "#eec200",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#cfc5ba",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#c7c5d3",
+                    "on-tertiary-fixed": "#1b1b25",
+                    "on-surface-variant": "#4d4632",
+                    "on-secondary-fixed": "#201b14",
+                    "surface-variant": "#ebe1d6",
+                    "on-tertiary": "#ffffff",
+                    "outline-variant": "#d1c6ab",
+                    "on-surface": "#1a1a1a",
+                    "inverse-surface": "#353028",
+                    "surface-container-highest": "#f2f0ea",
+                    "secondary-container": "#e9ded3",
+                    "on-background": "#1a1a1a",
+                    "secondary-fixed": "#ebe1d6",
+                    "tertiary-container": "#d2cfde",
+                    "error": "#ba1a1a",
+                    "on-primary-container": "#6c5700",
+                    "tertiary-fixed": "#e3e1f0",
+                    "surface-dim": "#f0f0f0",
+                    "surface-tint": "#735c00",
+                    "on-error": "#ffffff",
+                    "surface-bright": "#ffffff",
+                    "outline": "#7f7660",
+                    "on-secondary-container": "#696159",
+                    "surface-container": "#fafaf9",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#464652",
+                    "on-primary-fixed-variant": "#574500",
+                    "surface": "#ffffff",
+                    "primary-fixed": "#ffe083",
+                    "inverse-on-surface": "#faefe4",
+                    "on-secondary-fixed-variant": "#4c463e",
+                    "inverse-primary": "#eec200",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#f5f5f4",
+                    "primary": "#eab308",
+                    "background": "#ffffff",
+                    "surface-container-low": "#fcfcfb",
+                    "primary-container": "#facc15",
+                    "tertiary": "#5e5d6a",
+                    "on-primary-fixed": "#231b00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0px",
+                    "lg": "0px",
+                    "xl": "0px",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Inter"],
+                    "label": ["Space Grotesk"],
+                    "mono": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .dot-matrix {
+            background-image: radial-gradient(circle, #e5e5e5 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .data-grid-bg {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, #f5f5f5 1px, transparent 1px), linear-gradient(to bottom, #f5f5f5 1px, transparent 1px);
+        }
+        .code-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-container selection:text-on-primary-container overflow-hidden h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white border-b border-stone-200 flex justify-between items-center px-6 h-14 w-full">
+<div class="flex items-center gap-10">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 bg-primary-container flex items-center justify-center font-bold text-[10px]">AM</div>
+<span class="text-lg font-bold tracking-tight text-stone-900 uppercase font-headline">AgentMesh</span>
+</div>
+<div class="hidden md:flex items-center gap-6">
+<a class="font-['Space_Grotesk'] text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors" href="#">Internal Memory</a>
+<a class="font-['Space_Grotesk'] text-[11px] font-bold uppercase tracking-widest text-stone-400 hover:text-primary transition-colors" href="#">Commit History</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1 bg-stone-100 border border-stone-200">
+<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+<span class="font-mono text-[10px] text-stone-500 font-medium">NODE_STABLE</span>
+</div>
+<button class="p-2 text-stone-400 hover:text-stone-900 transition-colors"><span class="material-symbols-outlined text-xl">search</span></button>
+<button class="p-2 text-stone-400 hover:text-stone-900 transition-colors"><span class="material-symbols-outlined text-xl">settings</span></button>
+</div>
+</nav>
+<!-- Sidebar -->
+<aside class="h-screen w-64 fixed left-0 top-14 bg-stone-50 border-r border-stone-200 flex flex-col py-6 gap-2">
+<div class="px-6 mb-8">
+<h3 class="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">Core Infrastructure</h3>
+<p class="text-[10px] font-mono text-primary-container bg-stone-900 px-2 py-0.5 inline-block mt-1">v4.8.2-stable</p>
+</div>
+<div class="flex flex-col">
+<a class="flex items-center gap-3 px-6 py-2.5 font-['Space_Grotesk'] text-[11px] font-bold uppercase tracking-widest bg-primary-container text-stone-950" href="#">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">security</span> 
+            Policy Guard
+        </a>
+<a class="flex items-center gap-3 px-6 py-2.5 font-['Space_Grotesk'] text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 hover:text-stone-900 transition-all border-l-2 border-transparent" href="#">
+<span class="material-symbols-outlined text-lg">schema</span> Data Integrity
+        </a>
+<a class="flex items-center gap-3 px-6 py-2.5 font-['Space_Grotesk'] text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 hover:text-stone-900 transition-all border-l-2 border-transparent" href="#">
+<span class="material-symbols-outlined text-lg">analytics</span> Throughput
+        </a>
+<a class="flex items-center gap-3 px-6 py-2.5 font-['Space_Grotesk'] text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 hover:text-stone-900 transition-all border-l-2 border-transparent" href="#">
+<span class="material-symbols-outlined text-lg">history_edu</span> Audit Logs
+        </a>
+<a class="flex items-center gap-3 px-6 py-2.5 font-['Space_Grotesk'] text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-100 hover:text-stone-900 transition-all border-l-2 border-transparent" href="#">
+<span class="material-symbols-outlined text-lg">rebase_edit</span> Versioning
+        </a>
+</div>
+<div class="mt-auto px-6 mb-14">
+<button class="w-full bg-stone-900 text-primary-container py-3 font-mono font-bold text-[10px] tracking-widest uppercase hover:bg-stone-800 transition-colors border border-stone-800">
+            INIT NEW CLUSTER
+        </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 mt-14 p-8 flex-1 dot-matrix relative h-[calc(100vh-3.5rem)] overflow-hidden">
+<div class="grid grid-cols-12 gap-8 h-full relative z-10">
+<!-- Column 1: Code Logic (4 Units) -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-6 h-full">
+<div class="bg-white border border-stone-200 flex-1 flex flex-col code-shadow overflow-hidden">
+<div class="bg-stone-50 px-4 py-2.5 flex justify-between items-center border-b border-stone-200">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-stone-400 text-sm">javascript</span>
+<span class="font-mono text-[10px] font-bold text-stone-500">core/logic/validator.ts</span>
+</div>
+<div class="flex gap-1.5">
+<div class="w-2.5 h-2.5 border border-stone-300"></div>
+<div class="w-2.5 h-2.5 bg-primary-container"></div>
+<div class="w-2.5 h-2.5 border border-stone-300"></div>
+</div>
+</div>
+<div class="flex-1 p-6 font-mono text-[11px] leading-relaxed relative overflow-y-auto bg-[#fafafa]">
+<div class="flex">
+<div class="pr-6 text-stone-300 select-none text-right w-10 border-r border-stone-100">
+                            01<br/>02<br/>03<br/>04<br/>05<br/>06<br/>07<br/>08<br/>09<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16<br/>17<br/>18
+                        </div>
+<div class="pl-6 text-stone-700">
+<span class="text-stone-400">import { Orchestrator } from "@mesh/core";</span><br/>
+<span class="text-stone-400">import { AgentPool } from "@mesh/types";</span><br/><br/>
+<span class="text-primary font-bold">const</span> core = <span class="text-primary">new</span> Orchestrator({<br/>
+                                strict: <span class="text-orange-600">true</span>,<br/>
+                                latency: <span class="text-stone-500">"low"</span><br/>
+                            });<br/><br/>
+<span class="text-primary font-bold">async function</span> <span class="text-stone-900 font-bold underline decoration-primary-container">syncAgents</span>(nodeId: string) {<br/>
+                                <span class="text-primary font-bold">const</span> pool = <span class="text-primary">await</span> core.getPool(nodeId);<br/><br/>
+                                <span class="text-stone-400">// Evaluate node cluster health</span><br/>
+                                <span class="text-primary font-bold">const</span> states = pool.map(a =&gt; a.state());<br/>
+                                <span class="bg-primary-container/20 border-b border-primary-container">const drift = core.calculateDrift(states);</span><br/><br/>
+                                <span class="text-primary font-bold">return</span> core.reconcile(drift);<br/>
+                            }
+                        </div>
+</div>
+<!-- Code Overlay: System Alert -->
+<div class="absolute bottom-10 right-6 left-16 bg-white border-2 border-stone-900 p-4 shadow-xl">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-sm">warning</span>
+<span class="font-mono text-[10px] font-black uppercase">Conflict Detected</span>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center text-[9px] font-mono border-b border-stone-100 pb-1">
+<span class="text-stone-500">ID_HASH</span>
+<span class="text-stone-900 font-bold">#af92..31e</span>
+</div>
+<div class="flex justify-between items-center text-[9px] font-mono border-b border-stone-100 pb-1">
+<span class="text-stone-500">TYPE</span>
+<span class="text-stone-900 font-bold uppercase">Race Condition</span>
+</div>
+</div>
+<button class="w-full mt-3 bg-stone-100 hover:bg-primary-container text-[9px] font-bold uppercase py-2 transition-colors border border-stone-200">
+                            View Trace Map
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 2: Data Reconciliation (5 Units) -->
+<div class="col-span-12 lg:col-span-5 flex flex-col gap-6">
+<div class="bg-white border border-stone-200 flex flex-col h-full code-shadow">
+<div class="p-8">
+<div class="flex justify-between items-start mb-12">
+<div>
+<h2 class="font-headline text-3xl font-bold uppercase tracking-tighter leading-none text-stone-900">Logical Diff</h2>
+<p class="font-mono text-[10px] text-stone-400 mt-2 uppercase tracking-widest font-bold">Arbitrating concurrent state changes</p>
+</div>
+<div class="bg-stone-50 border border-stone-200 p-3 text-right">
+<span class="font-mono text-2xl font-bold text-stone-900">12</span>
+<span class="block font-mono text-[8px] font-bold text-stone-400 uppercase">Diff Batches</span>
+</div>
+</div>
+<!-- Abstract Technical Visualization: Data Clusters -->
+<div class="relative h-56 bg-stone-50 border border-stone-100 flex items-center justify-center mb-10 overflow-hidden">
+<!-- Grid lines -->
+<div class="absolute inset-0 data-grid-bg opacity-40"></div>
+<!-- Visual representation of "arbitration" - abstract node lines -->
+<div class="relative w-full h-full flex items-center justify-center">
+<div class="w-px h-32 bg-stone-200 absolute rotate-45"></div>
+<div class="w-px h-32 bg-stone-200 absolute -rotate-45"></div>
+<!-- Node A -->
+<div class="absolute left-1/4 top-1/4 flex flex-col items-center">
+<div class="w-12 h-12 bg-white border border-stone-900 flex items-center justify-center mb-2 z-10">
+<span class="font-mono text-xs font-bold text-stone-900">NODE_L</span>
+</div>
+<div class="w-20 h-0.5 bg-stone-900 origin-left translate-x-6 rotate-[22deg]"></div>
+</div>
+<!-- Node B -->
+<div class="absolute right-1/4 bottom-1/4 flex flex-col items-center">
+<div class="w-12 h-12 bg-white border border-stone-900 flex items-center justify-center mb-2 z-10">
+<span class="font-mono text-xs font-bold text-stone-900">NODE_R</span>
+</div>
+<div class="w-20 h-0.5 bg-stone-300 origin-right -translate-x-6 rotate-[22deg]"></div>
+</div>
+<!-- Center Cluster -->
+<div class="w-16 h-16 border-2 border-primary-container flex items-center justify-center bg-white shadow-xl z-20">
+<span class="material-symbols-outlined text-primary-container text-2xl">mediation</span>
+</div>
+</div>
+</div>
+<!-- Transaction List -->
+<div class="space-y-4">
+<div class="p-4 bg-primary-container/5 border border-primary-container flex justify-between items-center group cursor-pointer hover:bg-primary-container/10 transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-2 h-2 bg-primary-container"></div>
+<div>
+<h4 class="font-mono text-[11px] font-bold uppercase text-stone-900">REDUX_STATE_RECONCILE</h4>
+<p class="font-mono text-[9px] text-stone-400 mt-0.5">Affected paths: core/storage, core/auth</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-stone-400 group-hover:text-stone-900 transition-colors text-lg">arrow_forward_ios</span>
+</div>
+<div class="p-4 bg-white border border-stone-200 flex justify-between items-center opacity-50">
+<div class="flex items-center gap-4">
+<div class="w-2 h-2 bg-stone-300"></div>
+<div>
+<h4 class="font-mono text-[11px] font-bold uppercase text-stone-900">CACHE_EVICTION_POLICY</h4>
+<p class="font-mono text-[9px] text-stone-400 mt-0.5">Applied on: instance_node_04</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-stone-300 text-lg">lock</span>
+</div>
+<div class="p-4 bg-white border border-stone-200 flex justify-between items-center opacity-50">
+<div class="flex items-center gap-4">
+<div class="w-2 h-2 bg-stone-300"></div>
+<div>
+<h4 class="font-mono text-[11px] font-bold uppercase text-stone-900">DEPENDENCY_TREE_SWAP</h4>
+<p class="font-mono text-[9px] text-stone-400 mt-0.5">Applied on: global_context</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-stone-300 text-lg">lock</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 3: Telemetry Bento (3 Units) -->
+<div class="col-span-12 lg:col-span-3 flex flex-col gap-6 overflow-y-auto pb-10">
+<!-- Data Topology -->
+<div class="bg-white p-6 border border-stone-200 code-shadow flex flex-col">
+<span class="font-mono text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-6 block border-b border-stone-100 pb-2">Cluster Topology</span>
+<div class="flex-1 flex items-center justify-center relative aspect-square">
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-full h-full border border-stone-100 rounded-full flex items-center justify-center">
+<div class="w-2/3 h-2/3 border border-stone-100 rounded-full flex items-center justify-center">
+<div class="w-1/3 h-1/3 border border-stone-100 rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Abstract Data Points -->
+<div class="absolute top-2 right-4 w-2 h-2 bg-stone-900"></div>
+<div class="absolute bottom-10 left-8 w-2 h-2 bg-primary-container"></div>
+<div class="absolute top-1/2 left-4 w-2 h-2 bg-stone-900"></div>
+<div class="absolute top-8 left-1/2 w-2 h-2 bg-stone-200"></div>
+<svg class="absolute w-full h-full p-2" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="#000" r="1"></circle>
+<line stroke="#e5e5e5" stroke-width="0.5" x1="10" x2="50" y1="30" y2="50"></line>
+<line stroke="#e5e5e5" stroke-width="0.5" x1="85" x2="50" y1="20" y2="50"></line>
+<line stroke="#eab308" stroke-width="1" x1="30" x2="50" y1="90" y2="50"></line>
+</svg>
+<span class="absolute top-0 right-0 font-mono text-[8px] font-bold text-stone-400">EDGE_01</span>
+<span class="absolute bottom-0 left-0 font-mono text-[8px] font-bold text-primary">CORE_ACTIVE</span>
+</div>
+</div>
+<!-- Thread Saturation -->
+<div class="bg-stone-50 p-6 border border-stone-200 code-shadow">
+<span class="font-mono text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-6 block">Thread Saturation</span>
+<div class="grid grid-cols-2 gap-6">
+<div class="flex flex-col items-center">
+<div class="relative w-14 h-14 flex items-center justify-center mb-3">
+<svg class="w-full h-full -rotate-90">
+<circle class="text-stone-200" cx="28" cy="28" fill="transparent" r="24" stroke="currentColor" stroke-width="3"></circle>
+<circle class="text-stone-900" cx="28" cy="28" fill="transparent" r="24" stroke="currentColor" stroke-dasharray="150.8" stroke-dashoffset="30" stroke-width="3"></circle>
+</svg>
+<span class="absolute font-mono text-[10px] font-bold text-stone-900">80</span>
+</div>
+<span class="font-mono text-[8px] font-bold uppercase text-stone-500 tracking-tighter">I/O_THREADS</span>
+</div>
+<div class="flex flex-col items-center">
+<div class="relative w-14 h-14 flex items-center justify-center mb-3">
+<svg class="w-full h-full -rotate-90">
+<circle class="text-stone-200" cx="28" cy="28" fill="transparent" r="24" stroke="currentColor" stroke-width="3"></circle>
+<circle class="text-primary" cx="28" cy="28" fill="transparent" r="24" stroke="currentColor" stroke-dasharray="150.8" stroke-dashoffset="90" stroke-width="3"></circle>
+</svg>
+<span class="absolute font-mono text-[10px] font-bold text-stone-900">42</span>
+</div>
+<span class="font-mono text-[8px] font-bold uppercase text-stone-500 tracking-tighter">RECURSION</span>
+</div>
+</div>
+</div>
+<!-- Terminal Feed -->
+<div class="bg-stone-900 flex-1 p-6 border border-stone-800 text-primary-container">
+<div class="flex justify-between items-center mb-4 border-b border-stone-800 pb-2">
+<span class="font-mono text-[10px] font-bold uppercase tracking-widest">Runtime Feed</span>
+<div class="w-1.5 h-1.5 bg-primary-container animate-pulse"></div>
+</div>
+<div class="space-y-3 h-48 overflow-hidden relative">
+<div class="text-[9px] font-mono leading-tight opacity-70">
+<span class="text-stone-500">14:22:01</span> [INFO] Cluster heart-beat verified.
+                    </div>
+<div class="text-[9px] font-mono leading-tight opacity-70">
+<span class="text-stone-500">14:22:15</span> [WARN] High memory pressure on Node_3.
+                    </div>
+<div class="text-[9px] font-mono leading-tight text-white font-bold">
+<span class="text-stone-500">14:22:30</span> [EXEC] Running reconcile_v3 script...
+                    </div>
+<div class="text-[9px] font-mono leading-tight opacity-70">
+<span class="text-stone-500">14:22:45</span> [SYST] Diff batch #301 committed.
+                    </div>
+<!-- Bottom fade -->
+<div class="absolute bottom-0 left-0 w-full h-10 bg-gradient-to-t from-stone-900 to-transparent"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<footer class="fixed bottom-0 w-full z-50 h-10 bg-stone-100 border-t border-stone-200 flex justify-start items-center px-6 gap-6 w-full">
+<div class="text-stone-900 flex items-center gap-2 px-3 font-mono text-[10px] font-bold cursor-pointer hover:bg-white transition-all h-full">
+<span class="material-symbols-outlined text-sm">terminal</span> CONSOLE
+    </div>
+<div class="text-stone-400 flex items-center gap-2 px-3 font-mono text-[10px] font-bold cursor-pointer hover:text-stone-900 transition-all h-full">
+<span class="material-symbols-outlined text-sm">database</span> MEM_STORE
+    </div>
+<div class="text-stone-400 flex items-center gap-2 px-3 font-mono text-[10px] font-bold cursor-pointer hover:text-stone-900 transition-all h-full">
+<span class="material-symbols-outlined text-sm">lan</span> NETWORK
+    </div>
+<div class="ml-auto text-stone-500 font-mono text-[10px]">
+        EST. LATENCY: <span class="text-emerald-600 font-bold">12ms</span>
+</div>
+</footer>
+</body></html>
